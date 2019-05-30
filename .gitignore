@@ -1,0 +1,6 @@
+*.md
+
+myenv/
+
+# VS Code settings
+.vscode
