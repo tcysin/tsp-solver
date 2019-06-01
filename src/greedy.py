@@ -4,6 +4,7 @@ DESCRIPTION
     algorithm.
 """
 
+
 def greedy(graph):
     """Finds shortest tour using greedy approach.
 
@@ -11,6 +12,7 @@ def greedy(graph):
 
     Args
     ---
+        graph (Graph): instance of a Graph.
         graph (Graph): instance of a Graph.
 
     Returns

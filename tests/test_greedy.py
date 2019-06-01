@@ -11,4 +11,4 @@ def g(scope='module'):
     return g
 
 
-#def test_greedy(g)
+# def test_greedy(g)

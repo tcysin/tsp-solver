@@ -9,9 +9,10 @@ Artificial Intelligence Review, 13(2), 129-170.
 """
 
 import heapq
-
 from random import randint, random, sample
 from statistics import mean
+
+from greedy import greedy
 
 
 # taken from study above
@@ -252,38 +253,24 @@ def sim(chromosome):
 
 def genetic(graph):
 
-    print('Welcome to Genetic Algorithm.')
-
     # generate initial population
     population = generate_population(graph)
 
     # get initial fitness of the population
-    prev_average_fitness = get_average_fitness(population)
+    prev_mean_fitness = get_average_fitness(population)
 
     no_improvement_counter = 0
 
     # stopping condition 1: MAX_ITERATION limit reached
     for iteration in range(MAX_ITERATIONS):
         
-        if iteration % (MAX_ITERATIONS//100) == 0:
-            print('\nIteration {}'.format(iteration))
-            best_so_far = heapq.nlargest(1, population)[0][1]
-            print('Current best length:', graph.get_tour_length(best_so_far))
-            print('Current average fitness:', prev_average_fitness)
-            #best_path = heapq.nlargest(1, population)[0][1]
-            #print('Best path:', best_path)
-            #print('Best paths length: ', graph.get_tour_length(best_path))
-
-        
         # --- make sure population is not overly saturated ---
         if is_population_saturated(population):
             print('Population oversaturated. Returning best solution.')
             break
         
-        
         # --- select parents from the population ---
         parent1, parent2 = select_two_parents(population)
-        
 
         # --- apply OX1 crossover w. high probability proba_crossover ---
         if random() <= CROSSOVER_PROBA:      
@@ -291,33 +278,26 @@ def genetic(graph):
         if random() <= CROSSOVER_PROBA:
             child2 = crossover(parent2, parent1, ox1)        
 
-
         # --- apply SIM mutation w. low proba_mutation ---
         if random() <= MUTATION_PROBA:
             mutate(child1, sim)
         if random() <= MUTATION_PROBA:
             mutate(child2, sim)
 
-
-        # --- add children to population ---
-        # fitness calculation, package into (fitness, chromosome)
+        # --- replace ancestors with children in a population ---
         child1_item = get_fitness(child1, graph), child1
-        # add new child to the population, get rid of old parent
         update_population(child1_item, population)
 
         # do same for child2
         child2_item = get_fitness(child2, graph), child2
         update_population(child2_item, population)
 
-
         # --- check for no improvement ---
         current_average_fitness = get_average_fitness(population)
-
-        # if fitness did not improve in ITERATIONS_WITHOUT_IMPROVEMENT
-        is_fitness_improved = current_average_fitness > prev_average_fitness
+        is_fitness_improved = current_average_fitness > prev_mean_fitness
     
         # reassign prev_average_fitness to be current value
-        prev_average_fitness = current_average_fitness
+        prev_mean_fitness = current_average_fitness
         
         if not is_fitness_improved:
             no_improvement_counter += 1
