@@ -39,7 +39,14 @@ class _Point2D(_Node):
     __slots__ = ['x', 'y']
 
     def __init__(self, x, y):
-        # TODO: think whether error handling is needed here
+        try:
+            x = float(x)
+            y = float(y)
+        except:
+            print('Node coordinates cannot be converted to float.')
+            raise TypeError
+
+
         self.x = x
         self.y = y
 
@@ -59,7 +66,6 @@ class _Point2D(_Node):
 
         return distance
 
-    # private methods
     def _distance_euclidean_to(self, other):
         # return square of euclidean dist between this and other Point2D
 
@@ -134,7 +140,7 @@ def read_csv(path):
         # EDGE_WEIGHT_TYPE: EUC_2D tells us the type of an edge we operate on
         row = next(reader)[0]
         _, value = row.split(':')
-        node_type = value.strip()
+        edge_weight_type = value.strip()
 
         # NODE_COORD_SECTION row signifies the beginning of data body
         row = next(reader)[0]
