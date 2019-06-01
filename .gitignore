@@ -1,7 +1,11 @@
-# ignore notes file
+# notes file
 *.md
 
-# ignore my virtual environment
+# caches
+__pycache__/
+.pytest_cache/
+
+# my virtual environment
 myenv/
 
 # VS Code settings

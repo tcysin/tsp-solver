@@ -86,12 +86,17 @@ class Graph:
     def __init__(self, node_dict):
         # low-level representation of graph
         # node is represented by key-val pair {id: _Node}
-        for val in node_dict.values():
-
-            if not isinstance(val, _Node):
-                raise TypeError('Provided values are not nodes.')
+        self._validate(node_dict)
 
         self._node_dict = node_dict
+
+    def _validate(self, node_dict):
+        if len(node_dict) == 0:
+            raise ValueError('node_dict is empty.')
+
+        for val in node_dict.values():
+            if not isinstance(val, _Node):
+                raise TypeError('Provided values are not nodes.')
 
     def nodes(self):
         """Returns an iterator over the nodes of this graph."""

@@ -3,6 +3,16 @@ import pytest
 from src import graph
 
 
+@pytest.fixture
+def g(scope='module'):
+    d = {
+        'A': graph._Point2D(0, 3),
+        'B': graph._Point2D(4, 0),
+        'C': graph._Point2D(0, 0)
+    }
+    g = graph.Graph(d)
+
+
 class Test_Point2D:
 
     def test_distance_to(self):
@@ -25,3 +35,15 @@ class Test_Point2D:
         z = object()
         with pytest.raises(TypeError):
             a.distance_to(z)
+
+
+class TestGraph:
+
+    def test_init(self):
+        empty = {}
+        with pytest.raises(ValueError):
+            g = graph.Graph(empty)
+
+        d = {'1': object(), '2': object()}
+        with pytest.raises(TypeError):
+            g = graph.Graph(d)
