@@ -39,16 +39,18 @@ class _Point2D(_Node):
     __slots__ = ['x', 'y']
 
     def __init__(self, x, y):
+        self.x = self._to_float(x)
+        self.y = self._to_float(y)
+
+    def _to_float(coord):
+        # attempt to convert supplied coordinate to float
         try:
-            x = float(x)
-            y = float(y)
+            x = float(coord)
         except:
-            print('Node coordinates cannot be converted to float.')
+            print('Supplied coordinates cannot be converted to float.')
             raise TypeError
 
-
-        self.x = x
-        self.y = y
+        return x
 
     def distance_to(self, other):
         """Returns the distance from this node to other node of same type.
