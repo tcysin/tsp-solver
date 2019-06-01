@@ -107,8 +107,12 @@ class Graph:
     def distance(self, source, destination):
         """Returns distance between source and destination nodes."""
 
-        source_node = self._node_dict[source]
-        destination_node = self._node_dict[destination]
+        try:
+            source_node = self._node_dict[source]
+            destination_node = self._node_dict[destination]
+        except:
+            print('Either source or destination nodes are not in the graph.')
+            raise KeyError
 
         return source_node.distance_to(destination_node)
 
@@ -123,19 +127,24 @@ def read_csv(path):
             next(reader)
 
         # DIMENSION: 4 tells how many nodes our graph will have
-        n_nodes = int(next(reader)[0].split(':')[1].strip())
+        row = next(reader)[0]
+        _, value = row.split(':')
+        n_nodes = int(value.strip())
 
         # EDGE_WEIGHT_TYPE: EUC_2D tells us the type of an edge we operate on
-        #node_type = next(reader)[0].split(':')[1].strip()
+        row = next(reader)[0]
+        _, value = row.split(':')
+        node_type = value.strip()
 
         # NODE_COORD_SECTION row signifies the beginning of data body
-        assert(next(reader)[0] == 'NODE_COORD_SECTION')
+        row = next(reader)[0]
+        assert(row == 'NODE_COORD_SECTION')
 
         # next n_nodes lines are nodes: first digit is id, next two are coords
         node_dict = {}
         for _ in range(n_nodes):
-            row = next(reader)
-            node_id, *coordinates = row[0].split()
+            row = next(reader)[0]
+            node_id, *coordinates = row.split()
             node_dict[node_id] = _Point2D(*coordinates)
 
         assert(next(reader)[0] == 'EOF')

@@ -1,0 +1,11 @@
+NAME : a4 diamond
+COMMENT : drilling problem (Ludwig)
+TYPE : TSP
+DIMENSION: 4
+EDGE_WEIGHT_TYPE : EUC_2D
+NODE_COORD_SECTION
+  1 1 4
+  2 3 2
+  3 3 6
+  4 5 4
+EOF

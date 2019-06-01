@@ -1,3 +1,4 @@
+import math
 import pytest
 
 from src import graph
@@ -16,6 +17,10 @@ def g(scope='module'):
 
 
 class Test_Point2D:
+
+    def test_init(self):
+        with pytest.raises(TypeError):
+            _ = graph._Point2D('one', 'two')
 
     def test_distance_to(self):
         a = graph._Point2D(0., 0)  # mix floats and ints
@@ -59,3 +64,23 @@ class TestGraph:
         # test distance to something not in a graph
         with pytest.raises(KeyError):
             g.distance('A', 'spam')
+
+
+def test_read_csv():
+    g = graph.read_csv('resources/a4_diamond.tsp')
+
+    assert set(g.nodes()) == set(['1', '2', '3', '4'])
+
+    assert (
+        g.distance('1', '3')
+        == g.distance('3', '4')
+        == g.distance('4', '2')
+        == g.distance('2', '1')
+        == math.sqrt(8)
+    )
+
+    assert (
+        g.distance('1', '4')
+        == g.distance('3', '2')
+        == 4
+    )
