@@ -1,5 +1,7 @@
+# ignore notes file
 *.md
 
+# ignore my virtual environment
 myenv/
 
 # VS Code settings
