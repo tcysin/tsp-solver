@@ -42,7 +42,7 @@ class _Point2D(_Node):
         self.x = self._to_float(x)
         self.y = self._to_float(y)
 
-    def _to_float(coord):
+    def _to_float(self, coord):
         # attempt to convert supplied coordinate to float
         try:
             x = float(coord)
