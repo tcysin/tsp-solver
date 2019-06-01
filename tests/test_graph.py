@@ -12,6 +12,8 @@ def g(scope='module'):
     }
     g = graph.Graph(d)
 
+    return g
+
 
 class Test_Point2D:
 
@@ -47,3 +49,13 @@ class TestGraph:
         d = {'1': object(), '2': object()}
         with pytest.raises(TypeError):
             g = graph.Graph(d)
+
+    def test_nodes(self, g):
+        assert set(g.nodes()) == set(['A', 'B', 'C'])
+
+    def test_distance(self, g):
+        assert g.distance('A', 'B') == 5
+
+        # test distance to something not in a graph
+        with pytest.raises(KeyError):
+            g.distance('A', 'spam')
