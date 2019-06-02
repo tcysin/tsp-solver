@@ -47,8 +47,8 @@ class _Point2D(_Node):
         try:
             x = float(coord)
         except:
-            print('Supplied coordinates cannot be converted to float.')
-            raise TypeError
+            raise TypeError(
+                'Supplied coordinates cannot be converted to float.')
 
         return x
 
@@ -58,13 +58,17 @@ class _Point2D(_Node):
         If distance to other node is 0, returns 'inf' instead.
         """
 
+        # preconditions
         if type(other) is not type(self):
             raise TypeError('other is not the same node type')
 
         distance = self._distance_euclidean_to(other)
-        # convention for graphs -- distance to itself is inf
         if distance == 0:
-            distance = float('inf')
+            distance = float('inf')  # distance to itself is inf
+
+        # postconditions
+        assert type(distance) == float
+        assert distance > 0
 
         return distance
 
@@ -99,9 +103,11 @@ class Graph:
         self._node_dict = node_dict
 
     def _validate(self, node_dict):
+        # dict should be non-empty
         if len(node_dict) == 0:
             raise ValueError('node_dict is empty.')
 
+        # values must be instances of _Node
         for val in node_dict.values():
             if not isinstance(val, _Node):
                 raise TypeError('Provided values are not nodes.')
@@ -136,26 +142,30 @@ def read_csv(path):
 
         # DIMENSION: 4 tells how many nodes our graph will have
         row = next(reader)[0]
-        _, value = row.split(':')
+        key, value = row.split(':')
+        assert key.strip() == 'DIMENSION'
         n_nodes = int(value.strip())
 
         # EDGE_WEIGHT_TYPE: EUC_2D tells us the type of an edge we operate on
         row = next(reader)[0]
-        _, value = row.split(':')
-        edge_weight_type = value.strip()
+        key, _ = row.split(':')
+        assert key.strip() == 'EDGE_WEIGHT_TYPE'
 
         # NODE_COORD_SECTION row signifies the beginning of data body
         row = next(reader)[0]
-        assert(row == 'NODE_COORD_SECTION')
+        assert row.strip() == 'NODE_COORD_SECTION'
 
         # next n_nodes lines are nodes: first digit is id, next two are coords
         node_dict = {}
+        
         for _ in range(n_nodes):
             row = next(reader)[0]
             node_id, *coordinates = row.split()
             node_dict[node_id] = _Point2D(*coordinates)
 
-        assert(next(reader)[0] == 'EOF')
+        # postcondition
+        row = next(reader)[0]
+        assert row.strip() == 'EOF'
 
     graph = Graph(node_dict)
 

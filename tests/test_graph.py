@@ -1,4 +1,5 @@
 import math
+import os
 import pytest
 
 from src import graph
@@ -67,20 +68,20 @@ class TestGraph:
 
 
 def test_read_csv():
-    g = graph.read_csv('resources/a4_diamond.tsp')
+    gr = graph.read_csv('tests/resources/a4_diamond.tsp')
 
-    assert set(g.nodes()) == set(['1', '2', '3', '4'])
+    assert set(gr.nodes()) == set(['1', '2', '3', '4'])
 
     assert (
-        g.distance('1', '3')
-        == g.distance('3', '4')
-        == g.distance('4', '2')
-        == g.distance('2', '1')
+        gr.distance('1', '3')
+        == gr.distance('3', '4')
+        == gr.distance('4', '2')
+        == gr.distance('2', '1')
         == math.sqrt(8)
     )
 
     assert (
-        g.distance('1', '4')
-        == g.distance('3', '2')
+        gr.distance('1', '4')
+        == gr.distance('3', '2')
         == 4
     )
