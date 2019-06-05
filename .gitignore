@@ -1,5 +1,6 @@
 # notes file
 *.md
+misc/
 
 # caches
 __pycache__/

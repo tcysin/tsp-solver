@@ -21,6 +21,18 @@ class _Node(abc.ABC):
     @abc.abstractmethod
     # this is all the user needs to know about the node
     def distance_to(self, other):
+        """Returns the distance from this node to other node of same type.
+
+        If distance to other node is 0, returns 'inf' instead.
+
+        Args
+        ---
+            other: an instance of the same class
+
+        Returns
+        ---
+            distance: float
+        """
         pass
 
 
@@ -34,7 +46,8 @@ class _Point2D(_Node):
             Initialize new _Poin2D node with provided coordinates.
 
         distance(self, other)
-            Returns distance between this and other node of the same type"""
+            See base class.
+    """
 
     __slots__ = ['x', 'y']
 
@@ -42,25 +55,23 @@ class _Point2D(_Node):
         self.x = self._to_float(x)
         self.y = self._to_float(y)
 
-    def _to_float(self, coord):
-        # attempt to convert supplied coordinate to float
+    def _to_float(self, value):
+        """Attempts to convert value to float, if possible."""
+
         try:
-            x = float(coord)
+            x = float(value)
         except:
             raise TypeError(
-                'Supplied coordinates cannot be converted to float.')
+                'Supplied value cannot be converted to float.')
 
         return x
 
     def distance_to(self, other):
-        """Returns the distance from this node to other node of same type.
-
-        If distance to other node is 0, returns 'inf' instead.
-        """
+        """See base class."""
 
         # preconditions
         if type(other) is not type(self):
-            raise TypeError('other is not the same node type')
+            raise TypeError('other is not the same node type.')
 
         distance = self._distance_euclidean_to(other)
         if distance == 0:
@@ -73,7 +84,7 @@ class _Point2D(_Node):
         return distance
 
     def _distance_euclidean_to(self, other):
-        # return square of euclidean dist between this and other Point2D
+        """Returns euclidean distance between this and other _Point2D."""
 
         # bad abstraction break by knowing that other point has x and y
         x_displacement_sq = (other.x - self.x)**2
@@ -83,7 +94,6 @@ class _Point2D(_Node):
 
 
 class Graph:
-    # TODO: unit tests, re-think the graph as ADT
     """Graph Abstract Data Type.
 
     Methods

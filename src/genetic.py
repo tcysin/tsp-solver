@@ -25,6 +25,70 @@ CROSSOVER_PROBA = 1.0
 MUTATION_PROBA = 0.1
 
 
+def genetic(graph):
+
+    # generate initial population
+    population = generate_population(graph)
+
+    # get initial fitness of the population
+    prev_mean_fitness = mean_fitness(population)
+
+    no_improvement_counter = 0
+
+    # stopping condition - MAX_ITERATIONS limit reached
+    for _ in range(MAX_ITERATIONS):
+
+        # make sure population is not overly saturated
+        if is_population_saturated(population):
+            print('Population oversaturated. Returning best solution.')
+            break
+
+        # select parents from the population
+        parent1, parent2 = select_two_parents(population)
+
+        # apply OX1 crossover w. high probability proba_crossover
+        if random() <= CROSSOVER_PROBA:
+            child1 = crossover(parent1, parent2, ox1)
+        if random() <= CROSSOVER_PROBA:
+            child2 = crossover(parent2, parent1, ox1)
+
+        # apply SIM mutation w. low proba_mutation
+        if random() <= MUTATION_PROBA:
+            mutate(child1, sim)
+        if random() <= MUTATION_PROBA:
+            mutate(child2, sim)
+
+        # replace ancestors with children in a population
+        child1_item = get_fitness(child1, graph), child1
+        update_population(child1_item, population)
+
+        child2_item = get_fitness(child2, graph), child2
+        update_population(child2_item, population)
+
+        # check for no improvement
+        current_mean_fitness = mean_fitness(population)
+        is_fitness_improved = current_mean_fitness > prev_mean_fitness
+
+        # reassign prev_average_fitness to be current value
+        prev_mean_fitness = current_mean_fitness
+
+        if not is_fitness_improved:
+            no_improvement_counter += 1
+        else:
+            # in case of improvement, reset the counter
+            no_improvement_counter = 0
+
+        if no_improvement_counter >= ITERATIONS_WITHOUT_IMPROVEMENT:
+            s = ITERATIONS_WITHOUT_IMPROVEMENT
+            print('\nNo improvement recorded for {} iterations'.format(s))
+            print('Stopping Genetic Algorithm.')
+            break
+
+    best_solution = heapq.nlargest(1, population)[0][1]
+
+    return best_solution
+
+
 # ----- Helper functions -----
 def mutate(chromosome, func):
     """Applies provided mutation func to chromosome."""
@@ -263,67 +327,3 @@ def sim(chromosome):
     chromosome[swath] = reversed(chromosome[swath])
 
     return
-
-
-def genetic(graph):
-
-    # generate initial population
-    population = generate_population(graph)
-
-    # get initial fitness of the population
-    prev_mean_fitness = mean_fitness(population)
-
-    no_improvement_counter = 0
-
-    # stopping condition - MAX_ITERATIONS limit reached
-    for _ in range(MAX_ITERATIONS):
-
-        # make sure population is not overly saturated
-        if is_population_saturated(population):
-            print('Population oversaturated. Returning best solution.')
-            break
-
-        # select parents from the population
-        parent1, parent2 = select_two_parents(population)
-
-        # apply OX1 crossover w. high probability proba_crossover
-        if random() <= CROSSOVER_PROBA:
-            child1 = crossover(parent1, parent2, ox1)
-        if random() <= CROSSOVER_PROBA:
-            child2 = crossover(parent2, parent1, ox1)
-
-        # apply SIM mutation w. low proba_mutation
-        if random() <= MUTATION_PROBA:
-            mutate(child1, sim)
-        if random() <= MUTATION_PROBA:
-            mutate(child2, sim)
-
-        # replace ancestors with children in a population
-        child1_item = get_fitness(child1, graph), child1
-        update_population(child1_item, population)
-
-        child2_item = get_fitness(child2, graph), child2
-        update_population(child2_item, population)
-
-        # check for no improvement
-        current_mean_fitness = mean_fitness(population)
-        is_fitness_improved = current_mean_fitness > prev_mean_fitness
-
-        # reassign prev_average_fitness to be current value
-        prev_mean_fitness = current_mean_fitness
-
-        if not is_fitness_improved:
-            no_improvement_counter += 1
-        else:
-            # in case of improvement, reset the counter
-            no_improvement_counter = 0
-
-        if no_improvement_counter >= ITERATIONS_WITHOUT_IMPROVEMENT:
-            s = ITERATIONS_WITHOUT_IMPROVEMENT
-            print('\nNo improvement recorded for {} iterations'.format(s))
-            print('Stopping Genetic Algorithm.')
-            break
-
-    best_solution = heapq.nlargest(1, population)[0][1]
-
-    return best_solution

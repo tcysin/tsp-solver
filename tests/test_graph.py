@@ -50,7 +50,7 @@ class TestGraph:
     def test_init(self):
         empty = {}
         with pytest.raises(ValueError):
-            g = graph.Graph(empty)
+            _ = graph.Graph(empty)
 
         d = {'1': object(), '2': object()}
         with pytest.raises(TypeError):
@@ -61,6 +61,8 @@ class TestGraph:
 
     def test_distance(self, g):
         assert g.distance('A', 'B') == 5
+        assert g.distance('A', 'C') == 3
+        assert g.distance('C', 'B') == 4
 
         # test distance to something not in a graph
         with pytest.raises(KeyError):
@@ -85,3 +87,5 @@ def test_read_csv():
         == gr.distance('3', '2')
         == 4
     )
+
+    # TODO: add exception cases
