@@ -138,6 +138,7 @@ class Graph:
             raise KeyError(
                 'Either source or destination nodes are not in the graph.')
 
+        # this is potentially bad
         return source_node.distance_to(destination_node)
 
 
