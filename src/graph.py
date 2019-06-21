@@ -135,8 +135,8 @@ class Graph:
             source_node = self._node_dict[source]
             destination_node = self._node_dict[destination]
         except:
-            print('Either source or destination nodes are not in the graph.')
-            raise KeyError
+            raise KeyError(
+                'Either source or destination nodes are not in the graph.')
 
         return source_node.distance_to(destination_node)
 
@@ -167,7 +167,7 @@ def read_csv(path):
 
         # next n_nodes lines are nodes: first digit is id, next two are coords
         node_dict = {}
-        
+
         for _ in range(n_nodes):
             row = next(reader)[0]
             node_id, *coordinates = row.split()
