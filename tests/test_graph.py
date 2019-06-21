@@ -54,7 +54,7 @@ class TestGraph:
 
         d = {'1': object(), '2': object()}
         with pytest.raises(TypeError):
-            g = graph.Graph(d)
+            _ = graph.Graph(d)
 
     def test_nodes(self, g):
         assert set(g.nodes()) == set(['A', 'B', 'C'])

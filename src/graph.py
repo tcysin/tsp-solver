@@ -8,7 +8,7 @@ class _Node(abc.ABC):
     """ADT to represent abstract concept of a node.
 
     Methods to be implemented by sublcasses:
-    ---
+    
         distance_to(self, other)
             Returns distance to other node.
     """
@@ -25,12 +25,10 @@ class _Node(abc.ABC):
 
         If distance to other node is 0, returns 'inf' instead.
 
-        Args
-        ---
+        Args:
             other: an instance of the same class
 
-        Returns
-        ---
+        Returns:
             distance: float
         """
         pass
@@ -40,8 +38,7 @@ class _Point2D(_Node):
     # TODO: re-think point as ADT
     """Lightweight ADT to help represent a 2D point node.
 
-    Methods
-    ---
+    Methods:
         __init__(self, x, y)
             Initialize new _Poin2D node with provided coordinates.
 
@@ -96,8 +93,7 @@ class _Point2D(_Node):
 class Graph:
     """Graph Abstract Data Type.
 
-    Methods
-    ---
+    Methods:
         nodes(self)
             Returns an iterator over the nodes of this graph.
 
