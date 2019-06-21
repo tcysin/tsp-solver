@@ -7,10 +7,10 @@ class _Node(abc.ABC):
     # TODO: re-think this as ADT
     """ADT to represent abstract concept of a node.
 
-    Methods to be implemented by sublcasses
+    Methods to be implemented by sublcasses:
     ---
         distance_to(self, other)
-            Returns distance to other node
+            Returns distance to other node.
     """
     # declare empty slots to allow subclasses to have their own slots
     __slots__ = []
@@ -45,7 +45,7 @@ class _Point2D(_Node):
         __init__(self, x, y)
             Initialize new _Poin2D node with provided coordinates.
 
-        distance(self, other)
+        distance_to(self, other)
             See base class.
     """
 
