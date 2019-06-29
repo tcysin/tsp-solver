@@ -12,7 +12,7 @@ import heapq
 from random import randint, random, sample
 from statistics import mean
 
-from algorithms import greedy
+from .algorithms import greedy
 
 
 # taken from study above
@@ -105,7 +105,10 @@ def crossover(main_parent, secondary_parent, func):
 def generate_swath(sequence_length):
     """Generates random slice for sequence of given length."""
 
-    cut_points = sample(range(sequence_length), 2)
+    # pre-conditions
+    assert sequence_length >= 2
+
+    cut_points = sample(range(sequence_length + 1), 2)
     first_cut, last_cut = min(cut_points), max(cut_points)
 
     return slice(first_cut, last_cut)
