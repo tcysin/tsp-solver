@@ -12,7 +12,7 @@ import heapq
 from random import randint, random, sample
 from statistics import mean
 
-from greedy import greedy
+from algorithms import greedy
 
 
 # taken from study above
@@ -308,8 +308,6 @@ def ox1(main_parent, secondary_parent):
     return child
 
 # ----- Mutation Operators -----
-
-
 def sim(chromosome):
     """Apply simple inversion mutator to a chromosome.
 
