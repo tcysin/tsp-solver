@@ -143,22 +143,22 @@ def read_csv(path):
     with open(path) as csvfile:
         reader = csv.reader(csvfile)
 
-        # skip first 3 lines - name, comment, type
+        # skip first 3 rows - name, comment, type
         for _ in range(3):
             next(reader)
 
-        # DIMENSION: 4 tells how many nodes our graph will have
+        # row 'DIMENSION: 4' tells how many nodes our graph will have
         row = next(reader)[0]
         key, value = row.split(':')
         assert key.strip() == 'DIMENSION'
         n_nodes = int(value.strip())
 
-        # EDGE_WEIGHT_TYPE: EUC_2D tells us the type of an edge we operate on
+        # row 'EDGE_WEIGHT_TYPE: EUC_2D tells' us the type of an edge we operate on
         row = next(reader)[0]
         key, _ = row.split(':')
         assert key.strip() == 'EDGE_WEIGHT_TYPE'
 
-        # NODE_COORD_SECTION row signifies the beginning of data body
+        # row 'NODE_COORD_SECTION' signifies the beginning of data body
         row = next(reader)[0]
         assert row.strip() == 'NODE_COORD_SECTION'
 

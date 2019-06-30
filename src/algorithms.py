@@ -25,10 +25,11 @@ def greedy(graph):
     available_nodes = set(graph.nodes())
 
     # pick random starting node, add it to tour path
-    prev_node = available_nodes.pop()
-    tour.append(prev_node)
+    starting_node = available_nodes.pop()
+    tour.append(starting_node)
 
     while available_nodes:
+        prev_node = tour[-1]
 
         # pick next closest node out of available ones
         next_node = min(
@@ -39,6 +40,29 @@ def greedy(graph):
         tour.append(next_node)
         available_nodes.remove(next_node)
 
-        prev_node = next_node
-
     return tour
+
+
+# utility functions
+def tour_length(tour, graph):
+    """Returns the length of the tour in a graph."""
+
+    assert set(tour) == set(graph.nodes())
+
+    length = 0
+
+    for src, dest in edges_from_tour(tour):
+        length += graph.distance(src, dest)
+
+    return length
+    
+
+def edges_from_tour(tour):
+    """Returns iterator over edges in a tour. Includes edge from end to start."""
+
+    for edge in zip(tour, tour[1:]):
+        yield edge
+
+    # yield last edge from end to start
+    circling_edge = tour[-1], tour[0]
+    yield circling_edge
