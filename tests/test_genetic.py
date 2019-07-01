@@ -24,12 +24,9 @@ def test_random_slice():
     assert isinstance(s, slice)
     assert s.start == 0 and s.stop == 1
 
-    # positive sequence length
-    # length of 1
-    # length of 0
-    # legative length
-
     with pytest.raises(AssertionError):
         genetic.random_slice(0)
     with pytest.raises(AssertionError):
         genetic.random_slice(-1)
+    with pytest.raises(AssertionError):
+        genetic.random_slice('a')

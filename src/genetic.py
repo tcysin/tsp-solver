@@ -298,6 +298,7 @@ def ox1(main_parent, secondary_parent):
 
     return child
 
+
 # ----- Mutation Operators -----
 def sim(seq):
     """Applies simple inversion mutator to a sequence.
@@ -316,20 +317,21 @@ def sim(seq):
     seq[swath] = reversed(seq[swath])
 
 
-def random_slice(sequence_length):
-    """Returns random slice length for sequence of given length.
+def random_slice(seq_length):
+    """Returns random slice object given sequence length.
 
-    The slice has random starting and ending indices
+    Args:
+        seq_length (int): length of full sequence.
+            Should be positive.
 
-    Returns:
-        slice: python slice object.
     """
 
     # pre-condition
-    assert sequence_length > 0, 'sequence_length should be positive integer.'
+    assert isinstance(seq_length, int) and seq_length > 0, \
+        'seq_length should be positive integer.'
 
     # +1 to consider last index of sequence as well
-    cut_points = sample(range(sequence_length + 1), 2)
+    cut_points = sample(range(seq_length + 1), 2)
     first_cut, last_cut = min(cut_points), max(cut_points)
 
     return slice(first_cut, last_cut)
