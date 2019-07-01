@@ -1,11 +1,11 @@
 """
-Larranaga, P., Kuijpers, C. M. H., Murga, 
-R. H., Inza, I., & Dizdarevic, S. (1999). 
 
-Genetic algorithms for the travelling salesman problem: 
-A review of representations and operators. 
+Crossover and mutation operators are taken from the following study:
 
-Artificial Intelligence Review, 13(2), 129-170.
+    Larranaga, P., Kuijpers, C. M. H., Murga, R. H., Inza, I., 
+    & Dizdarevic, S. (1999). Genetic algorithms for the travelling 
+    salesman problem: A review of representations and operators. 
+    Artificial Intelligence Review, 13(2), 129-170.
 """
 
 import heapq
@@ -301,20 +301,31 @@ def ox1(main_parent, secondary_parent):
 
 # ----- Mutation Operators -----
 def sim(seq):
-    """Applies simple inversion mutator to a sequence.
+    """Applies simple inversion mutator to sequence.
 
-    Returns a copy of a sequence with reversed random sub-sequence.
+    Returns copy of seq with reversed random sub-sequence.
     """
 
-    # get random portion of a sequence
-    swath = random_slice(len(seq))
+    # precondition
+    assert len(seq) > 1, \
+        'length of seq should be integer greater than 2.'
+
+    seq_copy = seq[:]
+
+    # select random portion of a sequence
+    swath = random_slice(len(seq_copy))
 
     # check if the swath contains only 1 member
     while swath.stop - swath.start <= 1:
-        swath = random_slice(len(seq))
+        swath = random_slice(len(seq_copy))
 
     # reverse that portion
-    seq[swath] = reversed(seq[swath])
+    seq_copy[swath] = reversed(seq_copy[swath])
+
+    # postcondition
+    assert len(seq_copy) == len(seq)
+
+    return seq_copy
 
 
 def random_slice(seq_length):
@@ -326,7 +337,7 @@ def random_slice(seq_length):
 
     """
 
-    # pre-condition
+    # precondition
     assert isinstance(seq_length, int) and seq_length > 0, \
         'seq_length should be positive integer.'
 

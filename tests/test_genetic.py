@@ -1,5 +1,4 @@
 import math
-import os
 import pytest
 import random
 
@@ -30,3 +29,16 @@ def test_random_slice():
         genetic.random_slice(-1)
     with pytest.raises(AssertionError):
         genetic.random_slice('a')
+
+
+def test_sim():
+    random.seed(7)
+
+    seq = [1, 2, 3, 4, 5]
+    child = genetic.sim(seq)
+    assert child == [3, 2, 1, 4, 5]
+
+    with pytest.raises(AssertionError):
+        genetic.sim([])
+    with pytest.raises(AssertionError):
+        genetic.sim([1])
