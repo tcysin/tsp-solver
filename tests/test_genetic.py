@@ -42,3 +42,6 @@ def test_sim():
         genetic.sim([])
     with pytest.raises(AssertionError):
         genetic.sim([1])
+
+
+# TODO: test get_fitness

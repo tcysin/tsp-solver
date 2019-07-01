@@ -12,7 +12,7 @@ import heapq
 from random import randint, random, sample
 from statistics import mean
 
-from .algorithms import greedy
+from .algorithms import greedy, tour_length
 
 
 # taken from study above
@@ -89,7 +89,7 @@ def genetic(graph):
     return best_solution
 
 
-# ----- Helper functions -----
+# --- Helper functions ---
 def mutate(chromosome, func):
     """Applies provided mutation func to chromosome."""
 
@@ -100,12 +100,6 @@ def crossover(main_parent, secondary_parent, func):
     """Applies provided crossover func to main_parent and secondary_parent."""
 
     return func(main_parent, secondary_parent)
-
-
-def get_fitness(chromosome, graph):
-    """Returns fitness of a chromosome. Tour length in our case."""
-
-    return round(abs(graph.get_tour_length(chromosome) - graph.upper_bound()))
 
 
 def mean_fitness(population):
@@ -213,47 +207,56 @@ def update_population(item, population):
     return
 
 
-# ----- Population Initialization -----
-# Abdoun, O., Abouchaka, J. (2011). A Comparative Study of
-#   Adaptive Crossover Operators for GA to Resolve TSP.
-def generate_population(graph):
+# --- Population Initialization ---
+def generate_population(graph, size):
     """Generates initial population of (fitness, possible solution) items.
 
-    Uses heuristic to approximate shortest tour and then
-    repeatedly mutates it to construct other members.
+    Uses heuristic to approximate shortest tour and then repeatedly 
+    mutates it to construct other possible solutions. 
+    
+    Taken from:
+        Abdoun, O., Abouchaka, J. (2011). A Comparative Study of Adaptive 
+        Crossover Operators for GA to Resolve TSP.
 
-    Returns
-    ---
+    Returns:
         list: contains tuples (fitness score, tour)
     """
 
     population = []
 
-    # use heuristics to construct first individual
-    initial_chromosome = greedy(graph)
-
-    # add (fitness, initial_chromosome) to population
-    item = get_fitness(initial_chromosome, graph), initial_chromosome
+    # construct first individual, add it to population
+    initial_tour = greedy(graph)
+    item = get_fitness(initial_tour, graph), initial_tour
     population.append(item)
 
-    # mutate the initial chromosome to generate remaining members
-    for _ in range(POPULATION_SIZE - 1):
-
-        # copy to avoid changing initial one in-place
-        mutated_chromosome = initial_chromosome[:]
-        mutate(mutated_chromosome, sim)
+    # mutate initial solution to generate remaining members
+    for _ in range(size - 1):  # exclude first solution
+        mutated_tour = sim(initial_tour)
 
         # add mutant to population
-        item = get_fitness(mutated_chromosome, graph), mutated_chromosome
+        item = get_fitness(mutated_tour, graph), mutated_tour
         population.append(item)
 
+    # TODO: why do I heapify this shit? 
     # heapify the population
-    heapq.heapify(population)
+    #heapq.heapify(population)
 
     return population
 
 
-# ----- Crossover Operators -----
+# TODO: floating point arithmetic here - make something about it!
+def get_fitness(tour, graph):
+    """Returns fitness of a tour as float.
+
+    The smaller the tour, the larger is its fitness.
+    """
+
+    length = tour_length(tour, graph)
+
+    return 1. / length
+
+
+# --- Crossover Operators ---
 def ox1(main_parent, secondary_parent):
     """Returns a result of OX1 order crossover between parents.
 
@@ -299,11 +302,14 @@ def ox1(main_parent, secondary_parent):
     return child
 
 
-# ----- Mutation Operators -----
+# --- Mutation Operators ---
 def sim(seq):
     """Applies simple inversion mutator to sequence.
 
-    Returns copy of seq with reversed random sub-sequence.
+    Returns copy of seq with reversed random sub-sequence. Length of 
+    seq should be greater than 1.
+
+    Example: sim([1, 2, 3, 4, 5]) -> [3, 2, 1, 4, 5]
     """
 
     # precondition
