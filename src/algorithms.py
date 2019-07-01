@@ -29,6 +29,7 @@ def greedy(graph):
     tour.append(starting_node)
 
     while available_nodes:
+        # continue from previously added node
         prev_node = tour[-1]
 
         # pick next closest node out of available ones
@@ -55,7 +56,7 @@ def tour_length(tour, graph):
         length += graph.distance(src, dest)
 
     return length
-    
+
 
 def edges_from_tour(tour):
     """Returns iterator over edges in a tour. Includes edge from end to start."""

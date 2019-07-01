@@ -102,18 +102,6 @@ def crossover(main_parent, secondary_parent, func):
     return func(main_parent, secondary_parent)
 
 
-def generate_swath(sequence_length):
-    """Generates random slice for sequence of given length."""
-
-    # pre-conditions
-    assert sequence_length >= 2
-
-    cut_points = sample(range(sequence_length + 1), 2)
-    first_cut, last_cut = min(cut_points), max(cut_points)
-
-    return slice(first_cut, last_cut)
-
-
 def get_fitness(chromosome, graph):
     """Returns fitness of a chromosome. Tour length in our case."""
 
@@ -292,15 +280,15 @@ def ox1(main_parent, secondary_parent):
     child = length * [None]
 
     # choose random swath of genes between cut points
-    swath = generate_swath(length)
+    swath = random_slice(length)
 
     # check if the swath contains only 1 member
     while swath.stop - swath.start <= 1:
-        swath = generate_swath(length)
+        swath = random_slice(length)
 
     # make sure the swath does not cover the whole parent
     while swath.start == 0 and swath.stop == length:
-        swath = generate_swath(length)
+        swath = random_slice(length)
 
     # and copy it from main parent into a child at the same indices
     child[swath] = main_parent[swath]
@@ -311,20 +299,37 @@ def ox1(main_parent, secondary_parent):
     return child
 
 # ----- Mutation Operators -----
-def sim(chromosome):
-    """Apply simple inversion mutator to a chromosome.
+def sim(seq):
+    """Applies simple inversion mutator to a sequence.
 
-    Modifies in-place by reversing random sub-sequence. 
+    Returns a copy of a sequence with reversed random sub-sequence.
     """
 
-    # get random portion of a chromosome
-    swath = generate_swath(len(chromosome))
+    # get random portion of a sequence
+    swath = random_slice(len(seq))
 
     # check if the swath contains only 1 member
     while swath.stop - swath.start <= 1:
-        swath = generate_swath(len(chromosome))
+        swath = random_slice(len(seq))
 
     # reverse that portion
-    chromosome[swath] = reversed(chromosome[swath])
+    seq[swath] = reversed(seq[swath])
 
-    return
+
+def random_slice(sequence_length):
+    """Returns random slice length for sequence of given length.
+
+    The slice has random starting and ending indices
+
+    Returns:
+        slice: python slice object.
+    """
+
+    # pre-condition
+    assert sequence_length > 0, 'sequence_length should be positive integer.'
+
+    # +1 to consider last index of sequence as well
+    cut_points = sample(range(sequence_length + 1), 2)
+    first_cut, last_cut = min(cut_points), max(cut_points)
+
+    return slice(first_cut, last_cut)

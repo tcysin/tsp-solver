@@ -19,15 +19,17 @@ def g(scope='module'):
     return g
 
 
-def test_generate_swath():
-    swath = genetic.generate_swath(10)
-
-    assert isinstance(swath, slice)
-    assert swath.start < swath.stop
-
+def test_random_slice():
+    s = genetic.random_slice(1)
+    assert isinstance(s, slice)
+    assert s.start == 0 and s.stop == 1
 
     # positive sequence length
     # length of 1
     # length of 0
     # legative length
 
+    with pytest.raises(AssertionError):
+        genetic.random_slice(0)
+    with pytest.raises(AssertionError):
+        genetic.random_slice(-1)

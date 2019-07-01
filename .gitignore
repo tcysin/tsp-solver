@@ -2,6 +2,9 @@
 *.md
 misc/
 
+# playground file to step through the code
+playground.py
+
 # caches
 __pycache__/
 .pytest_cache/
