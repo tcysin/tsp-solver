@@ -311,7 +311,6 @@ def sim(seq):
         'length of seq should be integer greater than 2.'
 
     seq_copy = seq[:]
-
     # select random portion of a sequence
     swath = random_slice(len(seq_copy))
 
