@@ -9,7 +9,7 @@ DESCRIPTION
 
 
 def greedy(graph):
-    """Finds shortest tour using greedy approach.
+    """Calculates and returns shortest tour using greedy approach.
 
     Runs in O(n^2). Provides approximate solution.
 
@@ -46,8 +46,9 @@ def greedy(graph):
 
 # utility functions
 def tour_length(tour, graph):
-    """Returns the length of the tour in a graph."""
+    """Returns tour's length in a graph if valid."""
 
+    # precondition
     assert set(tour) == set(graph.nodes())
 
     length = 0
@@ -55,11 +56,17 @@ def tour_length(tour, graph):
     for src, dest in edges_from_tour(tour):
         length += graph.distance(src, dest)
 
+    # postcondition
+    assert length > 0, 'Length of tour should be positive.'
+
     return length
 
 
 def edges_from_tour(tour):
-    """Returns iterator over edges in a tour. Includes edge from end to start."""
+    """Returns iterator over edges in a tour. 
+    
+    Includes edge from end to start.
+    """
 
     for edge in zip(tour, tour[1:]):
         yield edge

@@ -9,9 +9,10 @@ from src import genetic
 @pytest.fixture
 def g(scope='module'):
     d = {
-        'A': graph._Point2D(0, 3),
-        'B': graph._Point2D(4, 0),
-        'C': graph._Point2D(0, 0)
+        'A': graph._Point2D(0, 0),
+        'B': graph._Point2D(0, 2),
+        'C': graph._Point2D(2, 2),
+        'D': graph._Point2D(2, 0)
     }
     g = graph.Graph(d)
 
@@ -35,8 +36,8 @@ def test_sim():
     random.seed(7)
 
     seq = [1, 2, 3, 4, 5]
-    child = genetic.sim(seq)
-    assert child == [3, 2, 1, 4, 5]
+    genetic.sim(seq)
+    assert seq == [3, 2, 1, 4, 5]
 
     with pytest.raises(AssertionError):
         genetic.sim([])
@@ -44,4 +45,28 @@ def test_sim():
         genetic.sim([1])
 
 
-# TODO: test get_fitness
+def test_fill_missing_genes():
+    source = [1, 2, 3, 4, 5]
+    s = slice(2, 4)
+    target = [None, None, 5, 2, None]
+
+    genetic.fill_missing_genes(s, source, target)
+
+    assert target == [3, 4, 5, 2, 1]
+
+
+# TODO: check for comparison - longer tour has less fitness than smaller one
+def test_get_fitness(g):
+    good_tour = ['A', 'B', 'C', 'D']
+    bad_tour = ['A', 'C', 'B', 'D']
+
+    good_fitness = genetic._get_fitness(good_tour, g)
+    # length is 2 + 2 + 2 + 2 == 8, fitness should be -8
+    assert good_fitness == -8
+
+    # optimal tour should have higher fitness value than bad tour
+    bad_fitness = genetic._get_fitness(bad_tour, g)
+    assert good_fitness > bad_fitness
+
+# TODO: test generate_population
+# TODO: test select_parent
