@@ -166,23 +166,21 @@ def _get_fitness(tour, graph):
 def select_two_parents(population):
     """Selects two parent solutions from population."""
 
-    parent1 = select_parent(population)
-    parent2 = select_parent(population)  # could be same as parent1
+    parent1 = tournament_selection(population)
+    parent2 = tournament_selection(population)  # could be same as parent1
 
     return parent1, parent2
 
 
-def select_parent(population):
-    """Selects two solutions from population with Tournament selection.
+def tournament_selection(population):
+    """Returns an item from the population.
+    
+    Uses 2-way tournament selection to choose a solutions.
 
     Taken from:
         Blickle, T., & Thiele, L. (1996). A comparison of selection schemes 
         used in evolutionary algorithms. Evolutionary Computation, 4(4), 
         361-394.
-
-    Differs in that we generate numbers in interval [0, total_fitness - 1] 
-    and select a solution if adding solutions's fitness strictly exceeds sum. 
-    That way we eliminate bias stemming from inclusion of zero. 
     """
 
     # TODO
@@ -192,21 +190,13 @@ def select_parent(population):
 
     # choose a number of individuals randomly from population
         # with or without replacement
+    chosen_items = sample(population, 2)
 
-    # select best-fitted individual from here
-
-    total = sum(fitness for fitness, _ in population)
-    num = randint(0, total - 1)
-    running_sum = 0.
-
-    for fitness, solution in population:
-        running_sum += fitness
-
-        if running_sum > num:
-            return solution
-
-    raise Exception('Should not get here')
-
+    # select best-fitted individual from chosen ones
+    best_item = max(chosen_items, key=itemgetter(0))
+    _, tour = best_item
+    
+    return tour
 
 # --- Crossover Operators ---
 def ox1(main_parent, secondary_parent):
@@ -217,12 +207,12 @@ def ox1(main_parent, secondary_parent):
     order of parent's genes.
 
     Example: 
-    parent1 = [A,B,C,D,E]
-    parent2 = [E,D,C,B,A]
-    randomly chosen subtour from parent1 = [B,C]
-    child before filling: [_, B, C, _, _]
-    starting position at parent2: [E,D,C, -> B ,A]
-    child after filling: [D, B, C, A, E]
+        parent1 = [A,B,C,D,E]
+        parent2 = [E,D,C,B,A]
+        randomly chosen subtour from parent1 = [B,C]
+        child before filling: [_, B, C, _, _]
+        starting position at parent2: [E,D,C, -> B ,A]
+        child after filling: [D, B, C, A, E]
     """
 
     # if parents happen to be the same
@@ -243,7 +233,7 @@ def ox1(main_parent, secondary_parent):
         swath = random_slice(length)
 
     child = length * [None]
-    
+
     # copy subtour from main parent into a child
     child[swath] = main_parent[swath]
 
