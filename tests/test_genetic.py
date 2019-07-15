@@ -43,6 +43,8 @@ def test_sim():
         genetic.sim([])
     with pytest.raises(AssertionError):
         genetic.sim([1])
+    with pytest.raises(AssertionError):
+        genetic.sim([1, 2])
 
 
 def test_fill_missing_genes():
@@ -53,6 +55,15 @@ def test_fill_missing_genes():
     genetic.fill_missing_genes(s, source, target)
 
     assert target == [3, 4, 5, 2, 1]
+
+
+def test_ox1():
+    a = [1,2,3,4,5,6,7,8,9,10]
+    b = list(reversed(a))
+    result = genetic.ox1(a,b)
+
+    assert len(result) == len(a)
+    assert set(result) == set(a)
 
 
 # TODO: check for comparison - longer tour has less fitness than smaller one

@@ -47,21 +47,21 @@ def genetic(graph):
         # select parents from the population
         parent1, parent2 = select_two_parents(population)
 
+        # TODO: put next two into additional routine
         # apply OX1 crossover w. high probability proba_crossover
-        if random() <= CROSSOVER_PROBA:
-            child1 = ox1(parent1, parent2)
-        if random() <= CROSSOVER_PROBA:
-            child2 = ox1(parent2, parent1)
+        child1 = ox1(parent1, parent2)
 
         # apply SIM mutation w. low proba_mutation
         if random() <= MUTATION_PROBA:
             sim(child1)
-        if random() <= MUTATION_PROBA:
-            sim(child2)
 
-        # replace ancestors with children in a population
+        # replace ancestor in a population
         child1_item = _get_fitness(child1, graph), child1
         update_population(child1_item, population)
+
+        # same for second child, but flip order of parents
+        child2 = ox1(parent2, parent1)
+        sim(child2) if random() <= MUTATION_PROBA else None
 
         child2_item = _get_fitness(child2, graph), child2
         update_population(child2_item, population)
@@ -174,7 +174,7 @@ def select_two_parents(population):
 
 def tournament_selection(population):
     """Returns an item from the population.
-    
+
     Uses 2-way tournament selection to choose a solutions.
 
     Taken from:
@@ -186,19 +186,20 @@ def tournament_selection(population):
     # TODO
     # https://www.cse.unr.edu/~sushil/class/gas/papers/Select.pdf
     # https://pdfs.semanticscholar.org/fef8/1135f587851f19fe515cb8eb3812e3706b27.pdf
-    
 
     # choose a number of individuals randomly from population
-        # with or without replacement
+    # with or without replacement
     chosen_items = sample(population, 2)
 
     # select best-fitted individual from chosen ones
     best_item = max(chosen_items, key=itemgetter(0))
     _, tour = best_item
-    
+
     return tour
 
 # --- Crossover Operators ---
+
+
 def ox1(main_parent, secondary_parent):
     """Returns a result of OX1 order crossover between parents.
 
@@ -206,33 +207,15 @@ def ox1(main_parent, secondary_parent):
     secondary_parent to fill in missing genes, preserving relative 
     order of parent's genes.
 
-    Example: 
-        parent1 = [A,B,C,D,E]
-        parent2 = [E,D,C,B,A]
-        randomly chosen subtour from parent1 = [B,C]
-        child before filling: [_, B, C, _, _]
-        starting position at parent2: [E,D,C, -> B ,A]
-        child after filling: [D, B, C, A, E]
+    See Larranaga et al. (1999) for detailed explanation.
     """
-
-    # if parents happen to be the same
-    if main_parent == secondary_parent:
-        return main_parent
 
     # preconditions
     length = len(main_parent)
     assert(length == len(secondary_parent))
 
-    swath = random_slice(length)
-    # TODO: maybe move this quality assurance routine somewhere?
-    # check if the swath contains only 1 member
-    while swath.stop - swath.start <= 1:
-        swath = random_slice(length)
-    # make sure the swath does not cover the whole parent
-    while swath.start == 0 and swath.stop == length:
-        swath = random_slice(length)
-
     child = length * [None]
+    swath = _get_valid_swath(length)
 
     # copy subtour from main parent into a child
     child[swath] = main_parent[swath]
@@ -266,8 +249,7 @@ def fill_missing_genes(prefilled_slice, source, target):
 
         if value not in redundant_values:
             # wrap around
-            idx_target = ((target_offset + start_point)
-                          % source_length)
+            idx_target = (target_offset + start_point) % source_length
 
             # fill in target's gene with parent's allele
             target[idx_target] = value
@@ -275,35 +257,46 @@ def fill_missing_genes(prefilled_slice, source, target):
             # move to next available place in target
             target_offset += 1
 
-    return
-
 
 # --- Mutation Operators ---
 def sim(seq):
     """Applies simple inversion mutator to a sequence.
 
     Modifies seq in place by reversing random sub-sequence. Length of 
-    random sub-sequence is guranteed to be at least two.
+    random sub-sequence is in interval [2, length).
 
     Args:
         seq: sequence with length greater than one.
 
-    Example: sim([1, 2, 3, 4, 5]) -> [3, 2, 1, 4, 5]
+    Example:
+        sim([1, 2, 3, 4, 5]) -> [3, 2, 1, 4, 5]
     """
 
     # precondition
-    assert len(seq) > 1, \
+    assert len(seq) > 2, \
         'length of seq should be greater than 2.'
 
     # select random portion of a sequence
-    swath = random_slice(len(seq))
-
-    # check if the swath contains only 1 member
-    while swath.stop - swath.start <= 1:
-        swath = random_slice(len(seq))
+    swath = _get_valid_swath(len(seq))
 
     # reverse that portion
     seq[swath] = reversed(seq[swath])
+
+
+def _get_valid_swath(length):
+    """Returns a slice with length in [2, length) interval."""
+
+    swath = random_slice(length)
+
+    # check if swath contains only 1 member
+    while (swath.stop - swath.start) <= 1:
+        swath = random_slice(length)
+
+    # check if swath covers full parent
+    while (swath.start == 0) and (swath.stop == length):
+        swath = random_slice(length)
+
+    return swath
 
 
 def random_slice(seq_length):
