@@ -91,19 +91,19 @@ def genetic(graph):
     return best_tour
 
 
-# --- Helper functions ---
+# TODO
 def mean_fitness(population):
     """Returns average fitness of population."""
 
     avg = mean(item[0] for item in population)
     return round(avg, 2)
 
-
+# TODO
 def is_population_saturated(population):
     """Checks wheter all values in population are same."""
     return len(set(fitness for (fitness, _) in population)) <= 1
 
-
+# TODO
 def update_population(item, population):
     """Updates population with new item if item is good enough.
 
@@ -119,7 +119,7 @@ def update_population(item, population):
     return
 
 
-# --- Population Initialization ---
+# --- working with population ---
 def generate_population(graph, size):
     """Returns initial population of possible solutions.
 
@@ -131,7 +131,7 @@ def generate_population(graph, size):
         Crossover Operators for GA to Resolve TSP.
 
     Returns:
-        set: contains tuples (fitness score, tour)
+        list: contains tuples (fitness score, tour)
     """
 
     population = []
@@ -144,7 +144,7 @@ def generate_population(graph, size):
     # mutate initial solution to generate remaining members
     for _ in range(size - 1):
         mutated_tour = initial_tour[:]
-        sim(mutated_tour)
+        sim(mutated_tour)  # mutation
 
         item = _get_fitness(mutated_tour, graph), mutated_tour
         population.append(item)
@@ -164,18 +164,19 @@ def _get_fitness(tour, graph):
 
 
 def select_two_parents(population):
-    """Selects two parent solutions from population."""
+    """Selects two parent solutions from population.
+    
+    They could be same.
+    """
 
-    _, parent1 = tournament_selection(population)
-    _, parent2 = tournament_selection(population)  # could be same as parent1
+    parent1 = _tournament_selection(population)
+    parent2 = _tournament_selection(population)  # could be same as parent1
 
     return parent1, parent2
 
 
-def tournament_selection(population):
-    """Returns an item from the population.
-
-    Defaults to 2-way tournament selection to choose a solutions.
+def _tournament_selection(population):
+    """Selects a solution from the population using 2-way tournament.
 
     Taken from:
         Blickle, T., & Thiele, L. (1996). A comparison of selection schemes 
@@ -183,74 +184,69 @@ def tournament_selection(population):
         361-394.
     """
 
-    # TODO
-    # https://www.cse.unr.edu/~sushil/class/gas/papers/Select.pdf
-    # https://pdfs.semanticscholar.org/fef8/1135f587851f19fe515cb8eb3812e3706b27.pdf
-
-    # choose a number of individuals randomly from population
-    # with or without replacement
+    # choose two individuals randomly from population
+    # without replacement
     chosen_items = sample(population, 2)
 
-    # select best-fitted individual from chosen ones
+    # select best-fitted individual from chosen ones according to fitness
     best_item = max(chosen_items, key=itemgetter(0))
+    _, tour = best_item
 
-    return best_item
+    return tour
 
 
 # --- Crossover Operators ---
-def ox1(main_parent, secondary_parent):
+def ox1(main_seq, secondary_seq):
     """Returns a result of OX1 order crossover between parents.
 
-    Copies random subtour of main_parent into child. Then uses 
-    secondary_parent to fill in missing genes, preserving relative 
-    order of parent's genes.
+    Copies random portion of main_seq into child. Then uses 
+    secondary_seq to fill in missing values, preserving relative 
+    order of secondary_seq's genes.
 
     See Larranaga et al. (1999) for detailed explanation.
+
+    Returns:
+        sequence
     """
 
     # preconditions
-    length = len(main_parent)
-    assert(length == len(secondary_parent))
+    length = len(main_seq)
+    assert(length == len(secondary_seq))
 
     child = length * [None]
     swath = _get_valid_swath(length)
 
     # copy subtour from main parent into a child
-    child[swath] = main_parent[swath]
+    child[swath] = main_seq[swath]
 
     # fill child's missing genes with alleles from secondary_parent
-    _fill_missing_genes(swath, source=secondary_parent, target=child)
+    _fill_missing_genes(swath, source=secondary_seq, target=child)
 
     return child
 
 
 def _fill_missing_genes(prefilled_slice, source, target):
     """Uses source's remaining alleles to fill missing genes in target."""
-
+    
     source_length = len(source)
     start_point = prefilled_slice.stop
 
     # remember already filled values to skip them later
-    redundant_values = set(target[prefilled_slice])
+    already_filled_values = set(target[prefilled_slice])
 
     # keep target's offset to support simulatneous updates
     target_offset = 0
 
-    # traverse the source using offsetting
+    # traverse the source using offsetting, wrap around if needed
     for source_offset in range(source_length):
-        # starting at specified point of source
-        # wrapping around if needed
         idx_source = (source_offset + start_point) % source_length
+        next_val = source[idx_source]
 
-        # pick next allele of interest from source
-        value = source[idx_source]
-
-        if value not in redundant_values:
-            # wrap around
+        if next_val not in already_filled_values:
             idx_target = (target_offset + start_point) % source_length
 
             # fill in target's gene with parent's allele
-            target[idx_target] = value
+            target[idx_target] = next_val
 
             # move to next available place in target
             target_offset += 1
@@ -260,14 +256,13 @@ def _fill_missing_genes(prefilled_slice, source, target):
 def sim(seq):
     """Applies simple inversion mutator to a sequence.
 
-    Modifies seq in place by reversing random sub-sequence. Length of 
-    random sub-sequence is in interval [2, length).
+    Modifies seq in place by reversing its random portion. Length of 
+    modified sub-sequence is in interval [2, length - 1].
+
+    See Larranaga et al. (1999) for detailed explanation.
 
     Args:
-        seq: sequence with length greater than one.
-
-    Example:
-        sim([1, 2, 3, 4, 5]) -> [3, 2, 1, 4, 5]
+        seq: sequence with length greater than one.    
     """
 
     # precondition
@@ -281,18 +276,26 @@ def sim(seq):
     seq[swath] = reversed(seq[swath])
 
 
-def _get_valid_swath(length):
-    """Returns random slice with length in [2, length - 1] interval."""
+# --- utility funcs ---
+def _get_valid_swath(seq_length):
+    """Returns random slice with length in [2, seq_length - 1] interval.
+    
+    Args:
+        seq_length (int): should be integer greater than 2.
+    """
 
-    swath = _random_slice(length)
+    # preconditions
+    assert seq_length > 2, 'seq_length should be integer greater than 2.'
+
+    swath = _random_slice(seq_length)
 
     # make sure swath contains more than 1 member
     while (swath.stop - swath.start) <= 1:
-        swath = _random_slice(length)
+        swath = _random_slice(seq_length)
 
     # make sure swath does not cover full parent
-    while (swath.start == 0) and (swath.stop == length):
-        swath = _random_slice(length)
+    while (swath.start == 0) and (swath.stop == seq_length):
+        swath = _random_slice(seq_length)
 
     return swath
 
@@ -302,7 +305,11 @@ def _random_slice(seq_length):
 
     Args:
         seq_length (int): length of full sequence.
-            Should be positive.
+            Should be a positive integer.
+
+    Returns:
+        slice: start and end are chosen randomly.
+            Contains at least one member.
 
     """
 

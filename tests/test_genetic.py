@@ -10,9 +10,9 @@ from src import genetic
 def g(scope='module'):
     d = {
         'A': graph._Point2D(0, 0),
-        'B': graph._Point2D(0, 2),
-        'C': graph._Point2D(2, 2),
-        'D': graph._Point2D(2, 0)
+        'B': graph._Point2D(0, 3),
+        'C': graph._Point2D(4, 3),
+        'D': graph._Point2D(4, 0)
     }
     g = graph.Graph(d)
 
@@ -83,8 +83,8 @@ def test_get_fitness(g):
     bad_tour = ['A', 'C', 'B', 'D']
 
     good_fitness = genetic._get_fitness(good_tour, g)
-    # length is 2 + 2 + 2 + 2 == 8, fitness should be -8
-    assert good_fitness == -8
+    # length is 3 + 4 + 3 + 4 == 14, fitness should be -14
+    assert good_fitness == -14
 
     # optimal tour should have higher fitness value than bad tour
     bad_fitness = genetic._get_fitness(bad_tour, g)
@@ -94,12 +94,12 @@ def test_get_fitness(g):
 def test_tournament_selection(p):
 
     random.seed(7)
-    item = genetic.tournament_selection(p)
-    assert item == (-2, ['C', 'B', 'A', 'D'])
+    tour = genetic._tournament_selection(p)
+    assert tour == ['C', 'B', 'A', 'D']
 
     random.seed(2)
-    item = genetic.tournament_selection(p)
-    assert item == (-4, ['A', 'B', 'C', 'D'])
+    tour = genetic._tournament_selection(p)
+    assert tour == ['A', 'B', 'C', 'D']
 
 
 def test_select_two_parents(p):
@@ -109,5 +109,17 @@ def test_select_two_parents(p):
     assert p2 == ['C', 'B', 'A', 'D']
 
 
-# TODO: test generate_population
-# TODO: test select_parent
+# TODO: this one is still random for some reason
+def test_generate_population(g):
+    random.seed(2)
+    population = genetic.generate_population(g, 4)
+
+    assert (
+        population ==
+        [
+            (-14.0, ['B', 'A', 'D', 'C']),
+            (-16.0, ['A', 'B', 'D', 'C']),
+            (-14.0, ['B', 'C', 'D', 'A']),
+            (-16.0, ['B', 'A', 'C', 'D'])
+        ]
+    )
