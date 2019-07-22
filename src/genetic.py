@@ -134,12 +134,12 @@ def generate_population(graph, size):
         set: contains tuples (fitness score, tour)
     """
 
-    population = set()
+    population = []
 
     # construct first individual, add it to population
     initial_tour = greedy(graph)
     item = _get_fitness(initial_tour, graph), initial_tour
-    population.add(item)
+    population.append(item)
 
     # mutate initial solution to generate remaining members
     for _ in range(size - 1):
@@ -147,7 +147,7 @@ def generate_population(graph, size):
         sim(mutated_tour)
 
         item = _get_fitness(mutated_tour, graph), mutated_tour
-        population.add(item)
+        population.append(item)
 
     return population
 
@@ -166,8 +166,8 @@ def _get_fitness(tour, graph):
 def select_two_parents(population):
     """Selects two parent solutions from population."""
 
-    parent1 = tournament_selection(population)
-    parent2 = tournament_selection(population)  # could be same as parent1
+    _, parent1 = tournament_selection(population)
+    _, parent2 = tournament_selection(population)  # could be same as parent1
 
     return parent1, parent2
 
@@ -175,7 +175,7 @@ def select_two_parents(population):
 def tournament_selection(population):
     """Returns an item from the population.
 
-    Uses 2-way tournament selection to choose a solutions.
+    Defaults to 2-way tournament selection to choose a solutions.
 
     Taken from:
         Blickle, T., & Thiele, L. (1996). A comparison of selection schemes 
@@ -193,13 +193,11 @@ def tournament_selection(population):
 
     # select best-fitted individual from chosen ones
     best_item = max(chosen_items, key=itemgetter(0))
-    _, tour = best_item
 
-    return tour
+    return best_item
+
 
 # --- Crossover Operators ---
-
-
 def ox1(main_parent, secondary_parent):
     """Returns a result of OX1 order crossover between parents.
 
@@ -221,12 +219,12 @@ def ox1(main_parent, secondary_parent):
     child[swath] = main_parent[swath]
 
     # fill child's missing genes with alleles from secondary_parent
-    fill_missing_genes(swath, source=secondary_parent, target=child)
+    _fill_missing_genes(swath, source=secondary_parent, target=child)
 
     return child
 
 
-def fill_missing_genes(prefilled_slice, source, target):
+def _fill_missing_genes(prefilled_slice, source, target):
     """Uses source's remaining alleles to fill missing genes in target."""
 
     source_length = len(source)
@@ -284,22 +282,22 @@ def sim(seq):
 
 
 def _get_valid_swath(length):
-    """Returns a slice with length in [2, length) interval."""
+    """Returns random slice with length in [2, length - 1] interval."""
 
-    swath = random_slice(length)
+    swath = _random_slice(length)
 
-    # check if swath contains only 1 member
+    # make sure swath contains more than 1 member
     while (swath.stop - swath.start) <= 1:
-        swath = random_slice(length)
+        swath = _random_slice(length)
 
-    # check if swath covers full parent
+    # make sure swath does not cover full parent
     while (swath.start == 0) and (swath.stop == length):
-        swath = random_slice(length)
+        swath = _random_slice(length)
 
     return swath
 
 
-def random_slice(seq_length):
+def _random_slice(seq_length):
     """Returns random slice object given sequence length.
 
     Args:

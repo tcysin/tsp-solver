@@ -19,17 +19,28 @@ def g(scope='module'):
     return g
 
 
+@pytest.fixture
+def p(scope='module'):
+    p = [
+        (-4, ['A', 'B', 'C', 'D']),
+        (-2, ['C', 'B', 'A', 'D']),
+        (-7, ['D', 'C', 'A', 'B'])
+    ]
+
+    return p
+
+
 def test_random_slice():
-    s = genetic.random_slice(1)
+    s = genetic._random_slice(1)
     assert isinstance(s, slice)
     assert s.start == 0 and s.stop == 1
 
     with pytest.raises(AssertionError):
-        genetic.random_slice(0)
+        genetic._random_slice(0)
     with pytest.raises(AssertionError):
-        genetic.random_slice(-1)
+        genetic._random_slice(-1)
     with pytest.raises(AssertionError):
-        genetic.random_slice('a')
+        genetic._random_slice('a')
 
 
 def test_sim():
@@ -52,15 +63,15 @@ def test_fill_missing_genes():
     s = slice(2, 4)
     target = [None, None, 5, 2, None]
 
-    genetic.fill_missing_genes(s, source, target)
+    genetic._fill_missing_genes(s, source, target)
 
     assert target == [3, 4, 5, 2, 1]
 
 
 def test_ox1():
-    a = [1,2,3,4,5,6,7,8,9,10]
+    a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     b = list(reversed(a))
-    result = genetic.ox1(a,b)
+    result = genetic.ox1(a, b)
 
     assert len(result) == len(a)
     assert set(result) == set(a)
@@ -78,6 +89,25 @@ def test_get_fitness(g):
     # optimal tour should have higher fitness value than bad tour
     bad_fitness = genetic._get_fitness(bad_tour, g)
     assert good_fitness > bad_fitness
+
+
+def test_tournament_selection(p):
+
+    random.seed(7)
+    item = genetic.tournament_selection(p)
+    assert item == (-2, ['C', 'B', 'A', 'D'])
+
+    random.seed(2)
+    item = genetic.tournament_selection(p)
+    assert item == (-4, ['A', 'B', 'C', 'D'])
+
+
+def test_select_two_parents(p):
+    random.seed(2)
+    p1, p2 = genetic.select_two_parents(p)
+    assert p1 == ['A', 'B', 'C', 'D']
+    assert p2 == ['C', 'B', 'A', 'D']
+
 
 # TODO: test generate_population
 # TODO: test select_parent
