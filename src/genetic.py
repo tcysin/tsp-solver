@@ -13,6 +13,8 @@ from operator import itemgetter
 from random import randint, random, sample
 from statistics import mean
 
+
+
 from .algorithms import greedy, tour_length
 
 
@@ -141,7 +143,7 @@ class Population:
 def genetic(graph):
 
     # generate initial population
-    population = generate_population(graph, POPULATION_SIZE)
+    #population = generate_population(graph, POPULATION_SIZE)
 
     # get initial fitness of the population
     #prev_mean_fitness = mean_fitness(population)
@@ -150,6 +152,7 @@ def genetic(graph):
 
     # stopping condition - MAX_ITERATIONS limit reached
     for _ in range(MAX_ITERATIONS):
+        pass
 
         # make sure population is not overly saturated
         # if is_population_saturated(population):
@@ -157,26 +160,26 @@ def genetic(graph):
         #    break
 
         # select parents from the population
-        parent1, parent2 = select_two_parents(population)
+        #parent1, parent2 = select_two_parents(population)
 
         # TODO: put next two into additional routine
         # apply OX1 crossover w. high probability proba_crossover
-        child1 = ox1(parent1, parent2)
+        #child1 = ox1(parent1, parent2)
 
         # apply SIM mutation w. low proba_mutation
-        if random() <= MUTATION_PROBA:
-            sim(child1)
+        #if random() <= MUTATION_PROBA:
+        #    sim(child1)
 
         # replace ancestor in a population
-        child1_item = _get_fitness(child1, graph), child1
-        update_population(child1_item, population)
+        #child1_item = _get_fitness(child1, graph), child1
+        #update_population(child1_item, population)
 
         # same for second child, but flip order of parents
-        child2 = ox1(parent2, parent1)
-        sim(child2) if random() <= MUTATION_PROBA else None
+        #child2 = ox1(parent2, parent1)
+        #sim(child2) if random() <= MUTATION_PROBA else None
 
-        child2_item = _get_fitness(child2, graph), child2
-        update_population(child2_item, population)
+        #child2_item = _get_fitness(child2, graph), child2
+        #update_population(child2_item, population)
 
         # check for no improvement
         #current_mean_fitness = mean_fitness(population)
