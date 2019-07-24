@@ -26,6 +26,118 @@ CROSSOVER_PROBA = 1.0
 MUTATION_PROBA = 0.1
 
 
+class Population:
+    """ADT to represent population of solutions for genetic algorithm.
+
+    Solution here is a sequence of nodes constituting a tour.
+    """
+
+    # helper classes
+    class _Item:
+        """Lightweight ADT to represent a solution in our population."""
+
+        __slots__ = '_fitness', '_tour'
+
+        def __init__(self, fitness, tour):
+            self._fitness = fitness
+            self._tour = tour
+
+        def __lt__(self, other):
+            return self._fitness < other._fitness
+
+        def __eq__(self, other):
+            return self._fitness == other._fitness
+
+    # class methods
+    def __init__(self, graph):
+        self._graph = graph
+        self._min_heap = []  # will be populated later
+
+    def initialize(self, size=200):
+        """Randomly initialize the population.
+
+        Uses greedy algorithm to approximate initial solution, then 
+        applies Simple Inversion mutation operator n-1 times to generate 
+        the rest.
+        """
+
+        # construct first individual, append it to population
+        initial_tour = greedy(self._graph)
+        fitness = self._fitness(initial_tour)
+        item = self._Item(fitness, initial_tour)
+        self._min_heap.append(item)  # add initial solution to population
+
+        # mutate initial solution to generate remaining members
+        for _ in range(size - 1):
+            mutated_tour = initial_tour[:]
+            sim(mutated_tour)
+
+            fitness = self._fitness(mutated_tour)
+            item = self._Item(fitness, mutated_tour)
+            self._min_heap.append(item)
+
+        # transform container into min-oriented heap
+        # makes smallest fitness lookup O(1), updating O(log n)
+        heapq.heapify(self._min_heap)
+
+    def _fitness(self, tour):
+        """Returns fitness of a tour.
+
+        The smaller the tour, the larger is its fitness.
+        """
+
+        length = tour_length(tour, self._graph)
+
+        return -1 * length
+
+    # TODO: better name? get_member?
+    def sample(self):
+        """Returns a solution tour using 2-way Tournament Selection.
+
+        Taken from:
+            Blickle, T., & Thiele, L. (1996). A comparison of selection 
+            schemes used in evolutionary algorithms. Evolutionary 
+            Computation, 4(4), 361-394.
+        """
+
+        # choose two individuals randomly from population
+        # without replacement
+        chosen_items = sample(self._min_heap, 2)
+
+        # select best-fitted individual from chosen ones according to fitness
+        best_item = max(chosen_items)
+
+        return best_item._tour
+
+    # TODO: better name? replace?
+    def update(self, tour):
+        """Updates population with a tour.
+
+        If fitness of provided tour is higher than that of lowest-scoring 
+        solution in the population:
+            1. Deletes the lowest-scoring solution.
+            2. Adds provided tour.
+
+        Otherwise, nothing happens.
+        """
+
+        item = self._Item(self._fitness(tour), tour)
+
+        worst_item = self._min_heap[0]
+        # whether new tour is better than worst one in population
+        if item > worst_item:
+            # remove lowest-scoring item, then add new item
+            heapq.heapreplace(self._min_heap, item)
+
+    def best_tour(self):
+        """Returns best-fitted solution tour from population."""
+
+        item = heapq.nlargest(1, self._min_heap)
+
+        return item._tour
+
+
+# algorithm
 def genetic(graph):
 
     # generate initial population
@@ -102,97 +214,6 @@ def mean_fitness(population):
 def is_population_saturated(population):
     """Checks wheter all values in population are same."""
     return len(set(fitness for (fitness, _) in population)) <= 1
-
-# TODO
-def update_population(item, population):
-    """Updates population with new item if item is good enough.
-
-    If provided items fitness is better than that of worst item in
-    population, remove worst item and add provided item.
-    """
-
-    # if items fitness is better than population's worst items fitness
-    if item[0] > population[0][0]:
-        # get rid of worst item, add this one
-        heapq.heappushpop(population, item)
-
-    return
-
-
-# --- working with population ---
-def generate_population(graph, size):
-    """Returns initial population of possible solutions.
-
-    Uses heuristic to approximate shortest tour and then repeatedly 
-    mutates it to construct other members.
-
-    Taken from:
-        Abdoun, O., Abouchaka, J. (2011). A Comparative Study of Adaptive 
-        Crossover Operators for GA to Resolve TSP.
-
-    Returns:
-        list: contains tuples (fitness score, tour)
-    """
-
-    population = []
-
-    # construct first individual, add it to population
-    initial_tour = greedy(graph)
-    item = _get_fitness(initial_tour, graph), initial_tour
-    population.append(item)
-
-    # mutate initial solution to generate remaining members
-    for _ in range(size - 1):
-        mutated_tour = initial_tour[:]
-        sim(mutated_tour)  # mutation
-
-        item = _get_fitness(mutated_tour, graph), mutated_tour
-        population.append(item)
-
-    return population
-
-
-def _get_fitness(tour, graph):
-    """Returns fitness of a tour.
-
-    The smaller the tour, the larger is its fitness.
-    """
-
-    length = tour_length(tour, graph)
-
-    return -1 * length
-
-
-def select_two_parents(population):
-    """Selects two parent solutions from population.
-    
-    They could be same.
-    """
-
-    parent1 = _tournament_selection(population)
-    parent2 = _tournament_selection(population)  # could be same as parent1
-
-    return parent1, parent2
-
-
-def _tournament_selection(population):
-    """Selects a solution from the population using 2-way tournament.
-
-    Taken from:
-        Blickle, T., & Thiele, L. (1996). A comparison of selection schemes 
-        used in evolutionary algorithms. Evolutionary Computation, 4(4), 
-        361-394.
-    """
-
-    # choose two individuals randomly from population
-    # without replacement
-    chosen_items = sample(population, 2)
-
-    # select best-fitted individual from chosen ones according to fitness
-    best_item = max(chosen_items, key=itemgetter(0))
-    _, tour = best_item
-
-    return tour
 
 
 # --- Crossover Operators ---
