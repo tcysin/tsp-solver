@@ -30,6 +30,10 @@ def p(scope='module'):
     return p
 
 
+class Test_Population:
+    pass
+
+
 def test_random_slice():
     s = genetic._random_slice(1)
     assert isinstance(s, slice)
@@ -78,48 +82,3 @@ def test_ox1():
 
 
 # TODO: check for comparison - longer tour has less fitness than smaller one
-def test_get_fitness(g):
-    good_tour = ['A', 'B', 'C', 'D']
-    bad_tour = ['A', 'C', 'B', 'D']
-
-    good_fitness = genetic._get_fitness(good_tour, g)
-    # length is 3 + 4 + 3 + 4 == 14, fitness should be -14
-    assert good_fitness == -14
-
-    # optimal tour should have higher fitness value than bad tour
-    bad_fitness = genetic._get_fitness(bad_tour, g)
-    assert good_fitness > bad_fitness
-
-
-def test_tournament_selection(p):
-
-    random.seed(7)
-    tour = genetic._tournament_selection(p)
-    assert tour == ['C', 'B', 'A', 'D']
-
-    random.seed(2)
-    tour = genetic._tournament_selection(p)
-    assert tour == ['A', 'B', 'C', 'D']
-
-
-def test_select_two_parents(p):
-    random.seed(2)
-    p1, p2 = genetic.select_two_parents(p)
-    assert p1 == ['A', 'B', 'C', 'D']
-    assert p2 == ['C', 'B', 'A', 'D']
-
-
-# TODO: this one is still random for some reason
-def test_generate_population(g):
-    random.seed(2)
-    population = genetic.generate_population(g, 4)
-
-    assert (
-        population ==
-        [
-            (-14.0, ['B', 'A', 'D', 'C']),
-            (-16.0, ['A', 'B', 'D', 'C']),
-            (-14.0, ['B', 'C', 'D', 'A']),
-            (-16.0, ['B', 'A', 'C', 'D'])
-        ]
-    )
