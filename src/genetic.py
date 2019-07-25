@@ -1,5 +1,4 @@
 """
-
 Crossover and mutation operators are taken from the following study:
 
     Larranaga, P., Kuijpers, C. M. H., Murga, R. H., Inza, I., 
@@ -27,11 +26,11 @@ ITERATIONS_WITHOUT_IMPROVEMENT = 1000
 CROSSOVER_PROBA = 1.0
 MUTATION_PROBA = 0.1
 
-
+# TODO: review the design with Code Complete (class and func design)
 class Population:
     """ADT to represent population of solutions for genetic algorithm.
 
-    Solution here is a sequence of nodes constituting a tour.
+    Solution is a sequence of node ids constituting a tour.
     """
 
     # helper classes
@@ -55,7 +54,7 @@ class Population:
         self._graph = graph
         self._min_heap = []  # will be populated later
 
-    def initialize(self, size=200):
+    def initialize(self, size):
         """Randomly initialize the population.
 
         Uses greedy algorithm to approximate initial solution, then 
@@ -93,7 +92,7 @@ class Population:
         return -1 * length
 
     # TODO: better name? get_member?
-    def sample(self):
+    def select_tour(self):
         """Returns a solution tour using 2-way Tournament Selection.
 
         Taken from:
@@ -201,10 +200,6 @@ def genetic(graph):
         # break
 
     #best_solution = heapq.nlargest(1, population)[0][1]
-    _, best_tour = max(population, key=itemgetter(0))
-
-    return best_tour
-
 
 # TODO
 def mean_fitness(population):
@@ -221,16 +216,16 @@ def is_population_saturated(population):
 
 # --- Crossover Operators ---
 def ox1(main_seq, secondary_seq):
-    """Returns a result of OX1 order crossover between parents.
+    """Returns a result of OX1 order crossover between sequences.
 
-    Copies random portion of main_seq into child. Then uses 
+    Copies random portion of main_seq into child list. Then uses 
     secondary_seq to fill in missing values, preserving relative 
     order of secondary_seq's genes.
 
     See Larranaga et al. (1999) for detailed explanation.
 
     Returns:
-        sequence
+        list
     """
 
     # preconditions
@@ -248,7 +243,7 @@ def ox1(main_seq, secondary_seq):
 
     return child
 
-
+# TODO: re-design this piece?
 def _fill_missing_genes(prefilled_slice, source, target):
     """Uses source's remaining alleles to fill missing genes in target."""
     
