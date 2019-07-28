@@ -1,5 +1,5 @@
 # notes file
-*.md
+notes.md
 misc/
 
 # playground file to step through the code
