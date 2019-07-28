@@ -45,6 +45,7 @@ def greedy(graph):
 
 
 # utility functions
+# TODO: move this inside the Graph class
 def tour_length(tour, graph):
     """Returns tour's length in a graph if valid."""
 

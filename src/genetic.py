@@ -35,7 +35,10 @@ class Population:
 
     # helper classes
     class _Item:
-        """Lightweight ADT to represent a solution in our population."""
+        """Lightweight ADT to represent a solution in our population.
+        
+        We use it to package information about fitness and tour together 
+        to simplify management of the heap."""
 
         __slots__ = '_fitness', '_tour'
 
@@ -52,7 +55,7 @@ class Population:
     # class methods
     def __init__(self, graph):
         self._graph = graph
-        self._min_heap = []  # will be populated later
+        self._item_heap = []  # min-oriented heap
 
     def initialize(self, size):
         """Randomly initialize the population.
@@ -66,7 +69,7 @@ class Population:
         initial_tour = greedy(self._graph)
         fitness = self._fitness(initial_tour)
         item = self._Item(fitness, initial_tour)
-        self._min_heap.append(item)  # add initial solution to population
+        self._item_heap.append(item)  # add initial solution to population
 
         # mutate initial solution to generate remaining members
         for _ in range(size - 1):
@@ -75,11 +78,11 @@ class Population:
 
             fitness = self._fitness(mutated_tour)
             item = self._Item(fitness, mutated_tour)
-            self._min_heap.append(item)
+            self._item_heap.append(item)
 
         # transform container into min-oriented heap
         # makes smallest fitness lookup O(1), updating O(log n)
-        heapq.heapify(self._min_heap)
+        heapq.heapify(self._item_heap)
 
     def _fitness(self, tour):
         """Returns fitness of a tour.
@@ -87,11 +90,14 @@ class Population:
         The smaller the tour, the larger is its fitness.
         """
 
+        # TODO: move tour length calculation out of here
+        # make tour length an argument
         length = tour_length(tour, self._graph)
 
         return -1 * length
 
-    # TODO: better name? get_member?
+    # TODO: better name?
+    # get_member / draw_tour / sample / sample_tour / select
     def select_tour(self):
         """Returns a solution tour using 2-way Tournament Selection.
 
@@ -103,7 +109,7 @@ class Population:
 
         # choose two individuals randomly from population
         # without replacement
-        chosen_items = sample(self._min_heap, 2)
+        chosen_items = sample(self._item_heap, 2)
 
         # select best-fitted individual from chosen ones according to fitness
         best_item = max(chosen_items)
@@ -122,18 +128,18 @@ class Population:
         Otherwise, nothing happens.
         """
 
-        item = self._Item(self._fitness(tour), tour)
+        new_item = self._Item(self._fitness(tour), tour)
 
-        worst_item = self._min_heap[0]
+        worst_item = self._item_heap[0]
         # whether new tour is better than worst one in population
-        if item > worst_item:
+        if new_item > worst_item:
             # remove lowest-scoring item, then add new item
-            heapq.heapreplace(self._min_heap, item)
+            heapq.heapreplace(self._item_heap, new_item)
 
     def best_tour(self):
         """Returns best-fitted solution tour from population."""
 
-        item = heapq.nlargest(1, self._min_heap)
+        item = heapq.nlargest(1, self._item_heap)
 
         return item._tour
 
