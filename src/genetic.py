@@ -13,7 +13,6 @@ from random import randint, random, sample, shuffle
 from statistics import mean
 
 
-
 from .algorithms import greedy
 
 
@@ -27,6 +26,8 @@ CROSSOVER_PROBA = 1.0
 MUTATION_PROBA = 0.1
 
 # TODO: review the design with Code Complete (class and func design)
+
+
 class Population:
     """ADT to represent population of solutions for genetic algorithm.
 
@@ -36,7 +37,7 @@ class Population:
     # helper classes
     class _Item:
         """Lightweight ADT to represent a solution in our population.
-        
+
         We use it to package information about fitness and tour together 
         to simplify management of the heap."""
 
@@ -61,7 +62,7 @@ class Population:
         """Randomly initialize the population."""
 
         for _ in range(size):
-            
+
             # construct possible tour, randomize the order of nodes
             candidate_tour = list(self._graph.nodes())
             shuffle(candidate_tour)
@@ -87,7 +88,7 @@ class Population:
 
         # TODO: move tour length calculation out of here
         # make tour length an argument
-        length = tour_length(tour, self._graph)
+        length = self._graph.tour_length(tour)
 
         return -1 * length
 
@@ -167,7 +168,7 @@ def genetic(graph):
         #child1 = ox1(parent1, parent2)
 
         # apply SIM mutation w. low proba_mutation
-        #if random() <= MUTATION_PROBA:
+        # if random() <= MUTATION_PROBA:
         #    sim(child1)
 
         # replace ancestor in a population
@@ -203,6 +204,8 @@ def genetic(graph):
     #best_solution = heapq.nlargest(1, population)[0][1]
 
 # TODO
+
+
 def mean_fitness(population):
     """Returns average fitness of population."""
 
@@ -210,6 +213,8 @@ def mean_fitness(population):
     return round(avg, 2)
 
 # TODO
+
+
 def is_population_saturated(population):
     """Checks wheter all values in population are same."""
     return len(set(fitness for (fitness, _) in population)) <= 1
@@ -245,9 +250,11 @@ def ox1(main_seq, secondary_seq):
     return child
 
 # TODO: re-design this piece?
+
+
 def _fill_missing_genes(prefilled_slice, source, target):
     """Uses source's remaining alleles to fill missing genes in target."""
-    
+
     source_length = len(source)
     start_point = prefilled_slice.stop
 
@@ -299,7 +306,7 @@ def sim(seq):
 # --- utility funcs ---
 def _get_valid_swath(seq_length):
     """Returns random slice with length in [2, seq_length - 1] interval.
-    
+
     Args:
         seq_length (int): should be integer greater than 2.
     """

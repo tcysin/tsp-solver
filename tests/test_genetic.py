@@ -20,20 +20,52 @@ def g(scope='module'):
 
     return g
 
-
+# TODO: think whether you really need fixture for Population
 @pytest.fixture
-def p(scope='module'):
-    p = [
-        (-4, ['A', 'B', 'C', 'D']),
-        (-2, ['C', 'B', 'A', 'D']),
-        (-7, ['D', 'C', 'A', 'B'])
-    ]
+def p(g, scope='module'):
+    p = genetic.Population(g)
 
     return p
 
 
 class Test_Population:
-    pass
+
+    class Test_Item:
+
+        def test_init(self):
+            good_tour_item = genetic.Population._Item(-13, [1, 2, 3, 4])
+            bad_tour_item = genetic.Population._Item(-20, [1, 3, 4, 2])
+
+            assert bad_tour_item < good_tour_item
+            assert not (bad_tour_item > good_tour_item)
+            assert good_tour_item == good_tour_item
+
+            # checking __slots__
+            with pytest.raises(AttributeError):
+                good_tour_item.hello = 15
+
+    def test_initialize(self, g):
+        #p = genetic.Population(g)
+        pass
+
+    def test_fitness(self, p):
+        tour1 = ['A', 'B', 'C', 'D']
+        tour2 = ['B', 'C', 'D', 'A']
+        assert p._fitness(tour1) == -14
+        assert p._fitness(tour2) == -14
+
+    def test_select_tour(self, p):
+        pass
+
+    def test_update(self, g):
+        p = genetic.Population(g)
+        pass
+
+    def test_best_tour(self, g):
+
+        p = genetic.Population(g)
+        p.initialize(3)
+        pass
 
 
 def test_random_slice():
@@ -81,6 +113,3 @@ def test_ox1():
 
     assert len(result) == len(a)
     assert set(result) == set(a)
-
-
-# TODO: check for comparison - longer tour has less fitness than smaller one
