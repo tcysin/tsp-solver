@@ -91,15 +91,7 @@ class _Point2D(_Node):
 
 
 class Graph:
-    """Graph Abstract Data Type.
-
-    Methods:
-        nodes(self)
-            Returns an iterator over the nodes of this graph.
-
-        distance(self, source, destination)
-            Returns distance between source and destination nodes.
-    """
+    """Graph Abstract Data Type."""
 
     def __init__(self, node_dict):
         # low-level representation of graph
@@ -137,6 +129,37 @@ class Graph:
         # this is potentially bad
         return source_node.distance_to(destination_node)
 
+    def tour_length(self, tour):
+        """Returns tour's length in a graph if valid.
+        
+        Includes the edge from last node to the first one.
+        """
+
+        # precondition
+        #assert set(tour) == set(graph.nodes())
+
+        length = 0
+        for src, dest in self._edges_from_tour(tour):
+            length += self.distance(src, dest)
+
+        # postcondition
+        assert length > 0, 'Length of tour should be positive.'
+
+        return length
+
+    def _edges_from_tour(self, tour):
+        """Returns iterator over edges in a tour. 
+        
+        Iterator yields tuples (src_node, dest_node). 
+        Includes edge from end to start.
+        """
+
+        for edge in zip(tour, tour[1:]):
+            yield edge
+
+        # yield last edge from end to start
+        circling_edge = tour[-1], tour[0]
+        yield circling_edge
 
 def read_csv(path):
 

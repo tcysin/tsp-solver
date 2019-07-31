@@ -42,36 +42,3 @@ def greedy(graph):
         available_nodes.remove(next_node)
 
     return tour
-
-
-# utility functions
-# TODO: move this inside the Graph class
-def tour_length(tour, graph):
-    """Returns tour's length in a graph if valid."""
-
-    # precondition
-    assert set(tour) == set(graph.nodes())
-
-    length = 0
-
-    for src, dest in edges_from_tour(tour):
-        length += graph.distance(src, dest)
-
-    # postcondition
-    assert length > 0, 'Length of tour should be positive.'
-
-    return length
-
-
-def edges_from_tour(tour):
-    """Returns iterator over edges in a tour. 
-    
-    Includes edge from end to start.
-    """
-
-    for edge in zip(tour, tour[1:]):
-        yield edge
-
-    # yield last edge from end to start
-    circling_edge = tour[-1], tour[0]
-    yield circling_edge

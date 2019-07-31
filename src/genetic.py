@@ -14,7 +14,7 @@ from statistics import mean
 
 
 
-from .algorithms import greedy, tour_length
+from .algorithms import greedy
 
 
 # taken from study above

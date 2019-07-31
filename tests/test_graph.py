@@ -68,6 +68,19 @@ class TestGraph:
         with pytest.raises(KeyError):
             g.distance('A', 'spam')
 
+    def test_edges_from_tour(self, g):
+        tour = [1, 2, 3, 4]
+
+        assert (
+            list(g._edges_from_tour(tour))
+            == [(1, 2), (2, 3), (3, 4), (4, 1)]
+        )
+
+    def test_tour_length(self, g):
+        tour = ['A', 'B', 'C']
+
+        assert g.tour_length(tour) == 3+4+5
+
 
 def test_read_csv():
     gr = graph.read_csv('tests/resources/a4_diamond.tsp')
