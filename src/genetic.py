@@ -9,7 +9,7 @@ Crossover and mutation operators are taken from the following study:
 
 import heapq
 from operator import itemgetter
-from random import randint, random, sample
+from random import randint, random, sample, shuffle
 from statistics import mean
 
 
@@ -58,31 +58,26 @@ class Population:
         self._item_heap = []  # min-oriented heap
 
     def initialize(self, size):
-        """Randomly initialize the population.
+        """Randomly initialize the population."""
 
-        Uses greedy algorithm to approximate initial solution, then 
-        applies Simple Inversion mutation operator n-1 times to generate 
-        the rest.
-        """
+        for _ in range(size):
+            
+            # construct possible tour, randomize the order of nodes
+            candidate_tour = list(self._graph.nodes())
+            shuffle(candidate_tour)
 
-        # construct first individual, append it to population
-        initial_tour = greedy(self._graph)
-        fitness = self._fitness(initial_tour)
-        item = self._Item(fitness, initial_tour)
-        self._item_heap.append(item)  # add initial solution to population
+            # package into _Item
+            fitness = self._fitness(candidate_tour)
+            item = self._Item(fitness, candidate_tour)
 
-        # mutate initial solution to generate remaining members
-        for _ in range(size - 1):
-            mutated_tour = initial_tour[:]
-            sim(mutated_tour)
-
-            fitness = self._fitness(mutated_tour)
-            item = self._Item(fitness, mutated_tour)
             self._item_heap.append(item)
 
         # transform container into min-oriented heap
         # makes smallest fitness lookup O(1), updating O(log n)
         heapq.heapify(self._item_heap)
+
+        # postcondition
+        assert len(self._item_heap) == size
 
     def _fitness(self, tour):
         """Returns fitness of a tour.

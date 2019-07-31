@@ -1,19 +1,32 @@
 # TSP Solver
-Simple tool to solve instances of [Travelling Salesman Problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem).
+Simple tool to solve instances of [Travelling Salesman Problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem). Finds shortest tours 
+for graphs like [these](https://wwwproxy.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp/).
 
-## Introduction
-Finds shortest tours in graphs.
-
+## About
 Currently implemented approaches include:
 
-- greedy algorithm
-- genetic algorithm
+- greedy algorithm (link)
+- genetic algorithm (link)
 
-Implemented as part of advanced algorithms university course.
+Completed as part of advanced algorithms university course.
 
-## Installing
+## Usage
+Code goes here
+
+## Prerequisites
+
+## Installation
 How to generate requirement file only for significant packages?
 
 How to exclude side packages?
 
 How to do proper install procedure for this type of stuff?
+
+## Tests
+Tests are implemented using `pytest`.
+
+## Documentation
+
+## Authors
+
+## License
