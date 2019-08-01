@@ -22,8 +22,7 @@ POPULATION_SIZE = 200
 MAX_ITERATIONS = 50000
 ITERATIONS_WITHOUT_IMPROVEMENT = 1000
 
-CROSSOVER_PROBA = 1.0
-MUTATION_PROBA = 0.1
+MUTATION_PROBA = 0.3
 
 # TODO: review the design with Code Complete (class and func design)
 
@@ -147,64 +146,33 @@ class Population:
 def genetic(graph):
 
     # generate initial population
-    #population = generate_population(graph, POPULATION_SIZE)
-
-    # get initial fitness of the population
-    #prev_mean_fitness = mean_fitness(population)
-
-    #no_improvement_counter = 0
+    population = Population(graph)
+    population.initialize(POPULATION_SIZE)
 
     # stopping condition - MAX_ITERATIONS limit reached
     for _ in range(MAX_ITERATIONS):
-        pass
+        # select parents from the population
+        parent1 = population.select_tour()
+        parent2 = population.select_tour()
+
+        # TODO: put next two into additional routine
+        child1 = ox1(parent1, parent2)  # crossover
+        sim(child1) if random() <= MUTATION_PROBA else None  # mutation
+        population.update(child1)  # replacing ancestor
+
+        # same for second child, but flip order of parents
+        child2 = ox1(parent2, parent1)
+        sim(child2) if random() <= MUTATION_PROBA else None
+        population.update(child2)
 
         # make sure population is not overly saturated
-        # if is_population_saturated(population):
+        # if population.is_saturated():
         #    print('Population oversaturated. Returning best solution.')
         #    break
 
-        # select parents from the population
-        #parent1, parent2 = select_two_parents(population)
+    best_tour = population.best_tour()
 
-        # TODO: put next two into additional routine
-        # apply OX1 crossover w. high probability proba_crossover
-        #child1 = ox1(parent1, parent2)
-
-        # apply SIM mutation w. low proba_mutation
-        # if random() <= MUTATION_PROBA:
-        #    sim(child1)
-
-        # replace ancestor in a population
-        #child1_item = _get_fitness(child1, graph), child1
-        #update_population(child1_item, population)
-
-        # same for second child, but flip order of parents
-        #child2 = ox1(parent2, parent1)
-        #sim(child2) if random() <= MUTATION_PROBA else None
-
-        #child2_item = _get_fitness(child2, graph), child2
-        #update_population(child2_item, population)
-
-        # check for no improvement
-        #current_mean_fitness = mean_fitness(population)
-        #is_fitness_improved = current_mean_fitness > prev_mean_fitness
-
-        # reassign prev_average_fitness to be current value
-        #prev_mean_fitness = current_mean_fitness
-
-        # if not is_fitness_improved:
-        #    no_improvement_counter += 1
-        # else:
-        # in case of improvement, reset the counter
-        #    no_improvement_counter = 0
-
-        # if no_improvement_counter >= ITERATIONS_WITHOUT_IMPROVEMENT:
-        #    s = ITERATIONS_WITHOUT_IMPROVEMENT
-        # print('\nNo improvement recorded for {} iterations'.format(s))
-        # print('Stopping Genetic Algorithm.')
-        # break
-
-    #best_solution = heapq.nlargest(1, population)[0][1]
+    return best_tour
 
 
 # --- Crossover Operators ---
@@ -234,8 +202,6 @@ def ox1(main_seq, secondary_seq):
     return child
 
 # TODO: re-design this piece?
-
-
 def _fill_missing_genes(prefilled_slice, source, target):
     """Uses source's remaining alleles to fill missing genes in target."""
 
@@ -321,14 +287,13 @@ def _random_slice(seq_length):
     Returns:
         slice: start and end are chosen randomly.
             Contains at least one member.
-
     """
 
     # precondition
     assert isinstance(seq_length, int) and seq_length > 0, \
         'seq_length should be positive integer.'
 
-    # +1 to consider last index of sequence as well
+    # +1 to consider last index of sequence
     cut_points = sample(range(seq_length + 1), 2)
     first_cut, last_cut = min(cut_points), max(cut_points)
 
