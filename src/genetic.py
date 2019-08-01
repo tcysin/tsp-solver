@@ -39,19 +39,20 @@ class Population:
         """Lightweight ADT to represent a solution in our population.
 
         We use it to package information about fitness and tour together 
-        to simplify management of the heap."""
+        to simplify management of the heap. 
+        Comparison is based on _fitness_val values."""
 
-        __slots__ = '_fitness', '_tour'
+        __slots__ = '_fitness_val', '_tour'
 
         def __init__(self, fitness, tour):
-            self._fitness = fitness
+            self._fitness_val = fitness
             self._tour = tour
 
         def __lt__(self, other):
-            return self._fitness < other._fitness
+            return self._fitness_val < other._fitness_val
 
         def __eq__(self, other):
-            return self._fitness == other._fitness
+            return self._fitness_val == other._fitness_val
 
     # class methods
     def __init__(self, graph):
@@ -59,7 +60,7 @@ class Population:
         self._item_heap = []  # min-oriented heap
 
     def initialize(self, size):
-        """Randomly initialize the population."""
+        """Randomly initializes the population."""
 
         for _ in range(size):
 
@@ -71,6 +72,7 @@ class Population:
             fitness = self._fitness(candidate_tour)
             item = self._Item(fitness, candidate_tour)
 
+            # append to the container
             self._item_heap.append(item)
 
         # transform container into min-oriented heap
@@ -107,12 +109,11 @@ class Population:
         # without replacement
         chosen_items = sample(self._item_heap, 2)
 
-        # select best-fitted individual from chosen ones according to fitness
+        # select best-fitted item, compare on fitness
         best_item = max(chosen_items)
 
         return best_item._tour
 
-    # TODO: better name? replace?
     def update(self, tour):
         """Updates population with a tour.
 
@@ -126,7 +127,9 @@ class Population:
 
         new_item = self._Item(self._fitness(tour), tour)
 
+        # our heap is min-oriented
         worst_item = self._item_heap[0]
+
         # whether new tour is better than worst one in population
         if new_item > worst_item:
             # remove lowest-scoring item, then add new item
@@ -135,12 +138,12 @@ class Population:
     def best_tour(self):
         """Returns best-fitted solution tour from population."""
 
-        item = heapq.nlargest(1, self._item_heap)
+        item, = heapq.nlargest(1, self._item_heap)
 
         return item._tour
 
 
-# algorithm
+# main algorithm
 def genetic(graph):
 
     # generate initial population
@@ -203,48 +206,29 @@ def genetic(graph):
 
     #best_solution = heapq.nlargest(1, population)[0][1]
 
-# TODO
-
-
-def mean_fitness(population):
-    """Returns average fitness of population."""
-
-    avg = mean(item[0] for item in population)
-    return round(avg, 2)
-
-# TODO
-
-
-def is_population_saturated(population):
-    """Checks wheter all values in population are same."""
-    return len(set(fitness for (fitness, _) in population)) <= 1
-
 
 # --- Crossover Operators ---
 def ox1(main_seq, secondary_seq):
-    """Returns a result of OX1 order crossover between sequences.
-
-    Copies random portion of main_seq into child list. Then uses 
-    secondary_seq to fill in missing values, preserving relative 
-    order of secondary_seq's genes.
+    """Returns a list - result of OX1 order crossover between sequences.
 
     See Larranaga et al. (1999) for detailed explanation.
-
-    Returns:
-        list
     """
 
     # preconditions
     length = len(main_seq)
-    assert(length == len(secondary_seq))
+    assert length == len(secondary_seq)
+    assert length > 2, 'Length of sequences should be greater than 2.'
+    assert set(main_seq) == set(secondary_seq), \
+        'Sequences must contain same elements.'
 
+    # initialize child and get random slice
     child = length * [None]
     swath = _get_valid_swath(length)
 
     # copy subtour from main parent into a child
     child[swath] = main_seq[swath]
 
-    # fill child's missing genes with alleles from secondary_parent
+    # fill child's missing genes with values from secondary_seq
     _fill_missing_genes(swath, source=secondary_seq, target=child)
 
     return child

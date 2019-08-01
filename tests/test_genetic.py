@@ -107,9 +107,11 @@ def test_fill_missing_genes():
 
 
 def test_ox1():
-    a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    random.seed(7)
+    a = [1, 2, 3, 4, 5]
     b = list(reversed(a))
     result = genetic.ox1(a, b)
 
     assert len(result) == len(a)
     assert set(result) == set(a)
+    assert result == [1,2,3,5,4]
