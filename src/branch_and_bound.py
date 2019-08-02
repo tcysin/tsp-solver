@@ -36,15 +36,14 @@ class Node:
     """Lightweight container for a tree node.
 
     Attibutes:
-        current (int) -- id of a current vertex
-        path (list) -- a sub-path of a tree leading to current vertex
-        M -- a matrix corresponding to current position in search tree
-        explored (set) -- a set of already explored vertices
-        bound (float) -- a bound of a current node 
-        
+        current (int): id of a current vertex.
+        path (list): a sub-path of a tree leading to current vertex.
+        M: a matrix corresponding to current position in search tree.
+        explored (set): a set of already explored vertices.
+        bound (float): a bound of a current node.
     """
     __slots__ = ['current', 'M', 'path', 'explored', 'bound']
-    
+
     def __init__(self, current, M, path, explored, bound):
         self.current = current
         self.M = M
@@ -57,6 +56,7 @@ class Node:
 def contains_valid_tour(node, tree):
     """Returns True if node's path is a valid tour, False otherwise."""
     return len(node.path) == tree.size()
+
 
 def get_children(node, tree):
     """Returns a generator over nodes' children in a tree.
@@ -73,23 +73,23 @@ def get_children(node, tree):
 
     # get all the possible destination vertices
     for vertex in get_unexplored_vertices(node.explored,
-         all_vertices):
+                                          all_vertices):
 
         # --- assemble an instance of kid node ---
         # vertex id under exploration
         vertex_kid = vertex
-        
+
         # get local copies of parent's (node) data
         M_kid = deepcopy(node.M)
-        
+
         path_kid = deepcopy(node.path)
         # update the path with fresh vertex
         path_kid.append(vertex_kid)
-        
+
         explored_kid = deepcopy(node.explored)
         # add fresh vertex to explored set
         explored_kid.add(vertex_kid)
-        
+
         bound_kid = node.bound
 
         # assemble an instance of a Node class
@@ -98,8 +98,9 @@ def get_children(node, tree):
                         path_kid,
                         explored_kid,
                         bound_kid)
-        
+
         yield node_kid
+
 
 def get_unexplored_vertices(explored, all_vertices):
     """Returns a set of unexplored vertices.
@@ -110,10 +111,12 @@ def get_unexplored_vertices(explored, all_vertices):
     """
     return all_vertices - explored
 
+
 def is_bound_worse(node):
     """Returns True if node's bound is bigger than global best solution."""
     global length_best
     return node.bound >= length_best
+
 
 def include_edge(beginning_node,
                  end_node,
@@ -137,7 +140,8 @@ def include_edge(beginning_node,
     M[end_node, starting_point] = float('Inf')
 
     return
-    
+
+
 def process(node):
     """Executes BnB edge inclusion and reduction over matrix.
 
@@ -157,35 +161,37 @@ def process(node):
 
     # reduce the matrix, get the cost of the reductions
     cost = reduce_and_get_cost(node.M)
-    
+
     # new bound - parents bound + edge weight + current reduction cost
     node.bound += weight + cost
 
     return
+
 
 def reduce_and_get_cost(M):
     """Reduces M in-place and returns cost of reduction."""
 
     # extract a vector of minimum values across the rows
     min_rows = M.min(axis=1)
-    
+
     # gracefully handle infinity; 0 does not contribute to cost
     # and helps escape nan when subtracting inf from inf
     min_rows[min_rows == float('Inf')] = 0
     # subtract these values from rows
-    M -= min_rows.reshape((-1,1))
+    M -= min_rows.reshape((-1, 1))
 
     # vector of minum values across the columns
     min_cols = M.min(axis=0)
-    
+
     # gracefully handle infinity
     min_cols[min_cols == float('Inf')] = 0
-    M -= min_cols.reshape((1,-1))
+    M -= min_cols.reshape((1, -1))
 
     # calculate the reduction cost
-    cost = sum(min_rows) +  sum(min_cols)
+    cost = sum(min_rows) + sum(min_cols)
 
     return cost
+
 
 def update_best_solution(node, tree):
     """Updates best global tour and length.
@@ -197,7 +203,7 @@ def update_best_solution(node, tree):
     global tour_best
 
     length_current = tree.get_tour_length(node.path)
-        
+
     if length_best > length_current:
         length_best = length_current
         tour_best = node.path
@@ -213,44 +219,42 @@ def DFS(node, tree):
     if contains_valid_tour(node, tree):
         update_best_solution(node, tree)
         return
-    
+
     # do something with the node using its parent information
     process(node)
-    
+
     # check the stopping condition
     if is_bound_worse(node):
         return
 
     # recursively explore the children of a node
     children = get_children(node, tree)
-    
+
     for kid in children:
         DFS(kid, tree)
 
 
-# --- Branch and Bound algorithm --- 
+# --- Branch and Bound algorithm ---
 def BnB(graph):
 
     print('Starting BnB...')
     start = clock()
-    
+
     # --- initial step ---
     global tour_best
     tour_best = greedy(graph)
     global length_best
     length_best = graph.get_tour_length(tour_best)
-    
 
-
-    # --- construct root of the tree ---
+    # --- construct root of the search tree ---
     # data needed to assemble a root
-    starting_vertex = next(graph.vertices())
-    path = [starting_vertex]
-    explored_nodes = { starting_vertex }
+    start_node = next(graph.vertices())
+    path = [start_node]
+    explored_nodes = {start_node}
     M = graph.get_adjacency_matrix()
+    
     # convert matrix to numpy representation
     M = np.array(M)
-
 
     # --- process first node manually ---
     # get the bound, reduce a matrix in-place
@@ -262,15 +266,15 @@ def BnB(graph):
 
     # --- explore the kids of the root node ---
     # assemble the root
-    root = Node(starting_vertex,
+    root = Node(start_node,
                 M,
                 path,
                 explored_nodes,
-                bound=bound)
+                bound)
 
     # recursively explore children of a root
     children = get_children(node=root, tree=graph)
-    
+
     for kid in children:
         DFS(kid, tree=graph)
 
@@ -279,7 +283,7 @@ def BnB(graph):
     print('Length', length_best)
 
     return tour_best
-    
+
 
 if __name__ == '__main__':
     vertices = {'a', 'b', 'c', 'd'}
