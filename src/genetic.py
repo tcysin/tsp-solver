@@ -200,19 +200,20 @@ def genetic(graph):
 def ox1(main_seq, secondary_seq):
     """Returns a list - result of OX1 order crossover between sequences.
 
-    See Larranaga et al. (1999) for detailed explanation.
+    See Larranaga et al. (1999) for detailed explanation. Works in 
+    O(len), where len is the length of main_seq.
     """
 
     # preconditions
     length = len(main_seq)
-    assert length == len(secondary_seq)
-    assert length > 2, 'Length of sequences should be greater than 2.'
+    assert length == len(secondary_seq), \
+        'Sequences must be of same length.'
     assert set(main_seq) == set(secondary_seq), \
         'Sequences must contain same elements.'
 
     # initialize child and get random slice
     child = length * [None]
-    swath = _get_valid_swath(length)
+    swath = _random_slice(length)
 
     # copy subtour from main parent into a child
     child[swath] = main_seq[swath]
@@ -254,8 +255,7 @@ def _fill_missing_genes(prefilled_slice, source, target):
 def sim(seq):
     """Applies simple inversion mutator to a sequence.
 
-    Modifies seq in place by reversing its random portion. Length of 
-    modified sub-sequence is in interval [2, length - 1].
+    Modifies seq in place by reversing its random portion.
 
     See Larranaga et al. (1999) for detailed explanation.
 
@@ -263,42 +263,18 @@ def sim(seq):
         seq: sequence with length greater than one.    
     """
 
-    # precondition
-    assert len(seq) > 2, \
-        'length of seq should be greater than 2.'
+    # precondition - 
+    assert len(seq) > 0, \
+        'Length of seq should be a positive integer'
 
     # select random portion of a sequence
-    swath = _get_valid_swath(len(seq))
+    swath = _random_slice(len(seq))
 
     # reverse that portion
     seq[swath] = reversed(seq[swath])
 
 
 # --- utility funcs ---
-# TODO: has multiple whiles in here - possible loops
-def _get_valid_swath(seq_length):
-    """Returns random slice with length in [2, seq_length - 1] interval.
-
-    Args:
-        seq_length (int): should be integer greater than 2.
-    """
-
-    # preconditions
-    assert seq_length > 2, 'seq_length should be integer greater than 2.'
-
-    swath = _random_slice(seq_length)
-
-    # make sure swath contains more than 1 member
-    while (swath.stop - swath.start) <= 1:
-        swath = _random_slice(seq_length)
-
-    # make sure swath does not cover full parent
-    while (swath.start == 0) and (swath.stop == seq_length):
-        swath = _random_slice(seq_length)
-
-    return swath
-
-
 def _random_slice(seq_length):
     """Returns random slice object given sequence length.
 
