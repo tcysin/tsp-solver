@@ -54,18 +54,18 @@ class Test_Population:
         assert p._fitness(tour1) == -14
         assert p._fitness(tour2) == -14
 
-    def test_select_tour(self, p):
-        pass
+    #def test_select_tour(self, p):
+    #    pass
 
-    def test_update(self, g):
-        p = genetic.Population(g)
-        pass
+    #def test_update(self, g):
+    #    _ = genetic.Population(g)
+    #    pass
 
-    def test_best_tour(self, g):
+    #def test_best_tour(self, g):
 
-        p = genetic.Population(g)
-        p.initialize(3)
-        pass
+    #    p = genetic.Population(g)
+    #    p.initialize(3)
+    #    pass
 
 
 def test_random_slice():
@@ -110,4 +110,10 @@ def test_ox1():
 
     assert len(result) == len(a)
     assert set(result) == set(a)
-    assert result == [4,2,3,1,5]
+    assert result == [4, 2, 3, 1, 5]
+
+
+#def test_genetic(g):
+#    a = 3
+#    result = genetic.genetic(g)
+#    assert result == '1 2 3 4'.split()

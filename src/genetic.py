@@ -17,7 +17,7 @@ from .algorithms import greedy
 
 
 # taken from study above
-POPULATION_SIZE = 200
+POPULATION_SIZE = 5
 
 MAX_ITERATIONS = 50000
 ITERATIONS_WITHOUT_IMPROVEMENT = 1000
@@ -151,8 +151,8 @@ class Population:
         # all internal nodes have same fitness
         min_item = self._item_heap[0]
 
-        # leaves of the tree in heap array start at [n // 2 + 1]
-        leaf_start = len(self._item_heap) // 2 + 1
+        # leaves of the tree in heap array start at [n // 2]
+        leaf_start = len(self._item_heap) // 2
 
         # check whether leaves have same values as minimum item
         for item in self._item_heap[leaf_start:]:
@@ -175,7 +175,7 @@ def genetic(graph):
     population.initialize(POPULATION_SIZE)
 
     # stopping condition - MAX_ITERATIONS limit reached
-    for _ in range(MAX_ITERATIONS):
+    for iteration in range(MAX_ITERATIONS):
 
         # select parents from the population
         parent1 = population.select_tour()
@@ -190,6 +190,10 @@ def genetic(graph):
         child2 = ox1(parent2, parent1)
         sim(child2) if random() <= MUTATION_PROBA else None
         population.update(child2)
+
+        # stopping condition - oversaturated
+        if (iteration % 1000 == 0) and population.is_saturated():
+            break
 
     best_tour = population.best_tour()
 
