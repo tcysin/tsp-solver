@@ -82,18 +82,14 @@ def test_random_slice():
 
 
 def test_sim():
-    random.seed(7)
+    random.seed(3)
 
     seq = [1, 2, 3, 4, 5]
     genetic.sim(seq)
-    assert seq == [3, 2, 1, 4, 5]
+    assert seq == [1, 4, 3, 2, 5]
 
     with pytest.raises(AssertionError):
         genetic.sim([])
-    with pytest.raises(AssertionError):
-        genetic.sim([1])
-    with pytest.raises(AssertionError):
-        genetic.sim([1, 2])
 
 
 def test_fill_missing_genes():
@@ -114,4 +110,4 @@ def test_ox1():
 
     assert len(result) == len(a)
     assert set(result) == set(a)
-    assert result == [1,2,3,5,4]
+    assert result == [4,2,3,1,5]
