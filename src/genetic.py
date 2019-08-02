@@ -16,17 +16,6 @@ from statistics import mean
 from .algorithms import greedy
 
 
-# taken from study above
-POPULATION_SIZE = 5
-
-MAX_ITERATIONS = 50000
-ITERATIONS_WITHOUT_IMPROVEMENT = 1000
-
-MUTATION_PROBA = 0.3
-
-# TODO: review the design with Code Complete (class and func design)
-
-
 class Population:
     """ADT to represent population of solutions for genetic algorithm.
 
@@ -87,14 +76,11 @@ class Population:
         The smaller the tour, the larger is its fitness.
         """
 
-        # TODO: move tour length calculation out of here
         # make tour length an argument
         length = self._graph.tour_length(tour)
 
         return -1 * length
 
-    # TODO: better name?
-    # get_member / draw_tour / sample / sample_tour / select
     def select_tour(self):
         """Returns a solution tour using 2-way Tournament Selection.
 
@@ -143,7 +129,7 @@ class Population:
 
     def is_saturated(self):
         """Returns True if all members have same fitness, False otherwise.
-        
+
         Works in O(n).
         """
 
@@ -166,13 +152,14 @@ class Population:
         return True
 
 
-
 # main algorithm
-def genetic(graph):
+def genetic(graph, population_size=200,
+            max_iterations=50000, mutation_proba=0.1):
+    """Estimates shortest tour in a graph using genetic algorithm."""
 
     # generate initial population
     population = Population(graph)
-    population.initialize(POPULATION_SIZE)
+    population.initialize(population_size)
 
     # stopping condition - MAX_ITERATIONS limit reached
     for iteration in range(MAX_ITERATIONS):
@@ -181,7 +168,6 @@ def genetic(graph):
         parent1 = population.select_tour()
         parent2 = population.select_tour()
 
-        # TODO: put next two into additional routine
         child1 = ox1(parent1, parent2)  # crossover
         sim(child1) if random() <= MUTATION_PROBA else None  # mutation
         population.update(child1)  # replacing ancestor
@@ -227,7 +213,7 @@ def ox1(main_seq, secondary_seq):
 
     return child
 
-# TODO: re-design this piece?
+
 def _fill_missing_genes(prefilled_slice, source, target):
     """Uses source's remaining alleles to fill missing genes in target."""
 
@@ -267,7 +253,7 @@ def sim(seq):
         seq: sequence with length greater than one.    
     """
 
-    # precondition - 
+    # precondition -
     assert len(seq) > 0, \
         'Length of seq should be a positive integer'
 

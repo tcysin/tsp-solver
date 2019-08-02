@@ -4,7 +4,6 @@ import math
 
 
 class _Node(abc.ABC):
-    # TODO: re-think this as ADT
     """ADT to represent abstract concept of a node.
 
     Methods to be implemented by sublcasses:
@@ -35,7 +34,6 @@ class _Node(abc.ABC):
 
 
 class _Point2D(_Node):
-    # TODO: re-think point as ADT
     """Lightweight ADT to help represent a 2D point node.
 
     Methods:
