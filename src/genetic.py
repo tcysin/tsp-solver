@@ -141,6 +141,31 @@ class Population:
 
         return item._tour
 
+    def is_saturated(self):
+        """Returns True if all members have same fitness, False otherwise.
+        
+        Works in O(n).
+        """
+
+        # if all leaves have the same fitness as min item, then
+        # all internal nodes have same fitness
+        min_item = self._item_heap[0]
+
+        # leaves of the tree in heap array start at [n // 2 + 1]
+        leaf_start = len(self._item_heap) // 2 + 1
+
+        # check whether leaves have same values as minimum item
+        for item in self._item_heap[leaf_start:]:
+
+            # as soon as values differ, population is not saturated
+            # and checking procedure is terminated
+            if min_item != item:
+                return False
+
+        # at this point, all leaves have same value as minimum item
+        return True
+
+
 
 # main algorithm
 def genetic(graph):
@@ -151,6 +176,7 @@ def genetic(graph):
 
     # stopping condition - MAX_ITERATIONS limit reached
     for _ in range(MAX_ITERATIONS):
+
         # select parents from the population
         parent1 = population.select_tour()
         parent2 = population.select_tour()
@@ -164,11 +190,6 @@ def genetic(graph):
         child2 = ox1(parent2, parent1)
         sim(child2) if random() <= MUTATION_PROBA else None
         population.update(child2)
-
-        # make sure population is not overly saturated
-        # if population.is_saturated():
-        #    print('Population oversaturated. Returning best solution.')
-        #    break
 
     best_tour = population.best_tour()
 
@@ -254,6 +275,7 @@ def sim(seq):
 
 
 # --- utility funcs ---
+# TODO: has multiple whiles in here - possible loops
 def _get_valid_swath(seq_length):
     """Returns random slice with length in [2, seq_length - 1] interval.
 
