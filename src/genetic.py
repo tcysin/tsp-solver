@@ -162,19 +162,19 @@ def genetic(graph, population_size=200,
     population.initialize(population_size)
 
     # stopping condition - MAX_ITERATIONS limit reached
-    for iteration in range(MAX_ITERATIONS):
+    for iteration in range(max_iterations):
 
         # select parents from the population
         parent1 = population.select_tour()
         parent2 = population.select_tour()
 
         child1 = ox1(parent1, parent2)  # crossover
-        sim(child1) if random() <= MUTATION_PROBA else None  # mutation
+        sim(child1) if random() <= mutation_proba else None  # mutation
         population.update(child1)  # replacing ancestor
 
         # same for second child, but flip order of parents
         child2 = ox1(parent2, parent1)
-        sim(child2) if random() <= MUTATION_PROBA else None
+        sim(child2) if random() <= mutation_proba else None
         population.update(child2)
 
         # stopping condition - oversaturated
