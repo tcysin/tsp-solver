@@ -5,6 +5,7 @@ Start at random node and repeatedly visit nearest node until all are
 visited.
 """
 
+
 def greedy(graph):
     """Calculates and returns shortest tour using greedy approach.
 

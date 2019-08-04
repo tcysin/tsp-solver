@@ -8,7 +8,6 @@ Crossover and mutation operators are taken from the following study:
 """
 
 import heapq
-from operator import itemgetter
 from random import random, sample, shuffle
 
 

@@ -7,7 +7,7 @@ class _Node(abc.ABC):
     """ADT to represent abstract concept of a node.
 
     Methods to be implemented by sublcasses:
-    
+
         distance_to(self, other)
             Returns distance to other node.
     """
@@ -130,7 +130,7 @@ class Graph:
 
     def tour_length(self, tour):
         """Returns tour's length in a graph if valid.
-        
+
         Includes the edge from last node to the first one.
         """
 
@@ -148,7 +148,7 @@ class Graph:
 
     def _edges_from_tour(self, tour):
         """Returns iterator over edges in a tour. 
-        
+
         Iterator yields tuples (src_node, dest_node). 
         Includes edge from end to start.
         """
@@ -159,6 +159,7 @@ class Graph:
         # yield last edge from end to start
         circling_edge = tour[-1], tour[0]
         yield circling_edge
+
 
 def read_csv(path):
 
