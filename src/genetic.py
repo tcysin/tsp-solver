@@ -9,11 +9,7 @@ Crossover and mutation operators are taken from the following study:
 
 import heapq
 from operator import itemgetter
-from random import randint, random, sample, shuffle
-from statistics import mean
-
-
-from .algorithms import greedy
+from random import random, sample, shuffle
 
 
 class Population:

@@ -34,7 +34,7 @@ The description of *supported file format* is given [here](https://wwwproxy.iwr.
 - [pytest](https://docs.pytest.org/en/latest/): 4.5.0 or higher for tests
 
 ## Tests
-Tests are implemented using `pytest`. To run multiple tests, please refer to [this piece](https://docs.pytest.org/en/latest/getting-started.html#run-multiple-tests) of *pytest* documentation.
+Tests are implemented using `pytest`. To run all tests, please refer to [this piece](https://docs.pytest.org/en/latest/getting-started.html#run-multiple-tests) of *pytest* documentation.
 
 ## Documentation
 
