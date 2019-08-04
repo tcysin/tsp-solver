@@ -1,4 +1,7 @@
 # TSP Solver
+
+![GLPK solution of tsp.](tsp_solution.png)
+
 Simple library to solve instances of Symmetric [Travelling Salesman Problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem). 
 Finds shortest tours for graphs like [these](https://wwwproxy.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp/).
 
@@ -36,4 +39,4 @@ Tests are implemented using `pytest`. To run multiple tests, please refer to [th
 ## Documentation
 
 ## License
-[MIT](LICENSE.md)
+[MIT](LICENSE)
