@@ -78,6 +78,7 @@ class _Point2D(_Node):
 
         return distance
 
+    # TODO: implement rounding as done on TSP website?
     def _distance_euclidean_to(self, other):
         """Returns euclidean distance between this and other _Point2D."""
 
