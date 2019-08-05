@@ -10,6 +10,7 @@ from src import genetic
 
 @pytest.fixture
 def g(scope='module'):
+    # TODO: maybe randomness comes from here?
     d = {
         'A': graph._Point2D(0, 0),
         'B': graph._Point2D(0, 3),
@@ -23,8 +24,9 @@ def g(scope='module'):
 # TODO: think whether you really need fixture for Population
 @pytest.fixture
 def p(g, scope='module'):
+    random.seed(7)
     p = genetic.Population(g)
-
+    p.initialize(4)
     return p
 
 
@@ -33,20 +35,35 @@ class Test_Population:
     class Test_Item:
 
         def test_init(self):
+            item = genetic.Population._Item(-13, [1, 2, 3, 4])
+            assert item._fitness_val
+            assert item._tour
+
+            # checking __slots__
+            with pytest.raises(AttributeError):
+                item.hello = 15
+
+        def test_lt(self):
             good_tour_item = genetic.Population._Item(-13, [1, 2, 3, 4])
             bad_tour_item = genetic.Population._Item(-20, [1, 3, 4, 2])
 
             assert bad_tour_item < good_tour_item
             assert not (bad_tour_item > good_tour_item)
-            assert good_tour_item == good_tour_item
 
-            # checking __slots__
-            with pytest.raises(AttributeError):
-                good_tour_item.hello = 15
+        def test_eq(self):
+            item = genetic.Population._Item(-13, [1, 2, 3, 4])
+            assert item == item
 
-    def test_initialize(self, g):
-        #p = genetic.Population(g)
-        pass
+    def test_initialize(self, p):
+
+        heap = p._item_heap
+        assert len(heap) == 4
+        assert isinstance(heap[0], genetic.Population._Item)
+
+        # all members should be items
+        assert all(
+            isinstance(item, genetic.Population._Item)
+            for item in heap)
 
     def test_fitness(self, p):
         tour1 = ['A', 'B', 'C', 'D']
@@ -54,14 +71,16 @@ class Test_Population:
         assert p._fitness(tour1) == -14
         assert p._fitness(tour2) == -14
 
-    #def test_select_tour(self, p):
+    def test_select_tour(self, p):
+        random.seed(7)
+        tour = p.select_tour()
+
+        assert len(tour) == 4
+
+    # def test_update(self, p):
     #    pass
 
-    #def test_update(self, g):
-    #    _ = genetic.Population(g)
-    #    pass
-
-    #def test_best_tour(self, g):
+    # def test_best_tour(self, g):
 
     #    p = genetic.Population(g)
     #    p.initialize(3)
@@ -113,7 +132,7 @@ def test_ox1():
     assert result == [4, 2, 3, 1, 5]
 
 
-#def test_genetic(g):
+# def test_genetic(g):
 #    a = 3
 #    result = genetic.genetic(g)
 #    assert result == '1 2 3 4'.split()

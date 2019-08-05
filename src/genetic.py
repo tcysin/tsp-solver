@@ -45,6 +45,8 @@ class Population:
     def initialize(self, size):
         """Randomly initializes the population."""
 
+        self._item_heap = []
+
         for _ in range(size):
 
             # construct possible tour, randomize the order of nodes
@@ -85,6 +87,9 @@ class Population:
             Computation, 4(4), 361-394.
         """
 
+        if not self._item_heap:
+            raise Exception('Heap has not been initalized.')
+
         # choose two individuals randomly from population
         # without replacement
         chosen_items = sample(self._item_heap, 2)
@@ -105,6 +110,9 @@ class Population:
         Otherwise, nothing happens.
         """
 
+        if not self._item_heap:
+            raise Exception('Heap has not been initalized.')
+
         new_item = self._Item(self._fitness(tour), tour)
 
         # our heap is min-oriented
@@ -118,6 +126,9 @@ class Population:
     def best_tour(self):
         """Returns best-fitted solution tour from population."""
 
+        if not self._item_heap:
+            raise Exception('Heap has not been initalized.')
+
         item, = heapq.nlargest(1, self._item_heap)
 
         return item._tour
@@ -128,6 +139,9 @@ class Population:
         Works in O(n).
         """
 
+        if not self._item_heap:
+            raise Exception('Heap has not been initalized.')
+
         # if all leaves have the same fitness as min item, then
         # all internal nodes have same fitness
         min_item = self._item_heap[0]
@@ -136,15 +150,10 @@ class Population:
         leaf_start = len(self._item_heap) // 2
 
         # check whether leaves have same values as minimum item
-        for item in self._item_heap[leaf_start:]:
-
-            # as soon as values differ, population is not saturated
-            # and checking procedure is terminated
-            if min_item != item:
-                return False
-
-        # at this point, all leaves have same value as minimum item
-        return True
+        return all(
+            min_item == leaf
+            for leaf in self._item_heap[leaf_start:]
+        )
 
 
 # main algorithm
