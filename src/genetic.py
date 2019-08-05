@@ -43,7 +43,7 @@ class Population:
         self._item_heap = []  # min-oriented heap
 
     def initialize(self, size):
-        """Randomly initializes the population."""
+        """Randomly initializes the population to specified size."""
 
         self._item_heap = []
 
@@ -79,12 +79,15 @@ class Population:
         return -1 * length
 
     def select_tour(self):
-        """Returns a solution tour using 2-way Tournament Selection.
+        """Selects a solution tour using 2-way Tournament Selection.
 
         Taken from:
             Blickle, T., & Thiele, L. (1996). A comparison of selection 
             schemes used in evolutionary algorithms. Evolutionary 
             Computation, 4(4), 361-394.
+
+        Returns:
+            tour: list of nodes constituting a tour.
         """
 
         if not self._item_heap:
@@ -108,6 +111,9 @@ class Population:
             2. Adds provided tour.
 
         Otherwise, nothing happens.
+
+        Args:
+            tour: list of nodes constituting a tour.
         """
 
         if not self._item_heap:
@@ -124,7 +130,11 @@ class Population:
             heapq.heapreplace(self._item_heap, new_item)
 
     def best_tour(self):
-        """Returns best-fitted solution tour from population."""
+        """Returns best-fitted solution tour from population.
+        
+        Returns:
+            tour: list of nodes constituting best tour.
+        """
 
         if not self._item_heap:
             raise Exception('Heap has not been initalized.')
@@ -159,7 +169,17 @@ class Population:
 # main algorithm
 def genetic(graph, population_size=200,
             max_iterations=50000, mutation_proba=0.1):
-    """Estimates shortest tour in a graph using genetic algorithm."""
+    """Estimates shortest tour in a graph using genetic algorithm.
+    
+    Args:
+        graph: initialized instance of Graph.
+        population_size: int, controls how many solutions population contains.
+        max_iterations: int.
+        mutation_proba: float in [0, 1], controls mutation probability.
+    
+    Returns:
+        tour: list of nodes constituting shortest estimated tour.
+    """
 
     # generate initial population
     population = Population(graph)
@@ -174,11 +194,12 @@ def genetic(graph, population_size=200,
 
         child1 = ox1(parent1, parent2)  # crossover
         sim(child1) if random() <= mutation_proba else None  # mutation
-        population.update(child1)  # replacing ancestor
 
         # same for second child, but flip order of parents
         child2 = ox1(parent2, parent1)
         sim(child2) if random() <= mutation_proba else None
+
+        population.update(child1)  # replacing ancestors
         population.update(child2)
 
         # stopping condition - oversaturated
@@ -194,8 +215,15 @@ def genetic(graph, population_size=200,
 def ox1(main_seq, secondary_seq):
     """Returns a list - result of OX1 order crossover between sequences.
 
-    See Larranaga et al. (1999) for detailed explanation. Works in 
-    O(len), where len is the length of main_seq.
+    See Larranaga et al. (1999) for detailed explanation. 
+    Works in O(len), where len is the length of main_seq.
+
+    Args:
+        main_seq, secondary_seq: python sequences.
+            Should contain same items and be of same length.
+
+    Returns:
+        child: list - result of applying OX1 crossover.
     """
 
     # preconditions
@@ -249,12 +277,11 @@ def _fill_missing_genes(prefilled_slice, source, target):
 def sim(seq):
     """Applies simple inversion mutator to a sequence.
 
-    Modifies seq in place by reversing its random portion.
-
+    Modifies sequence in place by reversing its random portion. 
     See Larranaga et al. (1999) for detailed explanation.
 
     Args:
-        seq: sequence with length greater than one.    
+        seq: mutable sequence with length greater than one.    
     """
 
     # precondition -
