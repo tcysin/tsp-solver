@@ -34,12 +34,25 @@ class SearchTree:
     # class methods
     def __init__(self, graph):
         self._graph = graph
-        self._tour_best = greedy(graph)
-        self._length_best = graph.tour_length(self._tour_best)
 
-        self._initialize_root()
+        # the following values will be initialized explicitly
+        self._tour_best = None
+        self._length_best = None
+        self._root = None
 
-    def _initialize_root(self):
+    def initialize(self):
+        """Initializes the search tree.
+
+        Approximates best tour to get its length. Then, initializes 
+        the root node of the search tree.
+        """
+
+        self._tour_best = greedy(self._graph)
+        self._length_best = self._graph.tour_length(self._tour_best)
+
+        self._root = self._construct_root()
+
+    def _construct_root(self):
         """Manually constructs root node in space search tree."""
 
         # data needed to assemble the root node
@@ -56,7 +69,7 @@ class SearchTree:
         bound = 0 + reduction_cost + 0
 
         # assemble the root
-        self._root = self._Node(path, M, bound)
+        return self._Node(path, M, bound)
 
     def _reduce_and_get_cost(self, M):
         """Reduces matrix M in-place and returns cost of reduction."""
@@ -111,7 +124,8 @@ class SearchTree:
 
             # get local copies of parent's (node) data
             M_kid = deepcopy(node.M)
-          
+
+            # remember parent's bound
             bound_kid = node.bound
 
             # assemble an instance of a Node class
@@ -171,11 +185,7 @@ class SearchTree:
         # new bound = parents bound + edge weight + current reduction cost
         node.bound += weight + cost
 
-    def _include_edge(self,
-                      begin_vertex,
-                      end_vertex,
-                      start,
-                      M):
+    def _include_edge(self, begin_vertex, end_vertex, start, M):
         """Modifies a matrix to include an edge.
 
         Sets a row, a column and a particular cell to infinity.
@@ -193,10 +203,16 @@ class SearchTree:
         # restrict edge from begin_vertex back to beginning of a tour
         M[end_vertex, start] = float('Inf')
 
+    def best_tour(self):
+        """Returns best tour."""
+
+        return self._tour_best
+
 
 def branch_and_bound(graph):
 
     st = SearchTree(graph)
+    st.initialize()
     st.explore()
 
     tour = st.best_tour()
