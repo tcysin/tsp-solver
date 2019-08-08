@@ -96,8 +96,8 @@ class Graph:
         # low-level representation of graph
         # node is represented by key-val pair {id: _Node}
         self._validate(node_dict)
-
         self._node_dict = node_dict
+        self._adjacency_matrix = None
 
     def _validate(self, node_dict):
         # dict should be non-empty
@@ -152,9 +152,9 @@ class Graph:
         return length
 
     def _edges_from_tour(self, tour):
-        """Returns iterator over edges in a tour. 
+        """Returns iterator over edges in a tour.
 
-        Iterator yields tuples (src_node, dest_node). 
+        Iterator yields tuples (src_node, dest_node).
         Includes edge from end to start.
         """
 
@@ -164,6 +164,36 @@ class Graph:
         # yield last edge from end to start
         circling_edge = tour[-1], tour[0]
         yield circling_edge
+
+    def adjacency_matrix(self):
+        """Returns adjacency matrix for this graph."""
+
+        if not self._adjacency_matrix:
+            self._compute_adjacency_matrix()
+
+        return self._adjacency_matrix
+
+    def _compute_adjacency_matrix(self):
+        """Naively computes adjacency matrix."""
+
+        # initialize an empty matrix
+        adjacency_matrix = [[None]*self.size()
+                            for _ in range(self.size())]
+
+        # populate the matrix with pairwise distances between nodes
+        for out_id in self.nodes():
+            for in_id in self.nodes():
+
+                # set self distance to infinity
+                if out_id == in_id:
+                    adjacency_matrix[out_id][in_id] = float('Inf')
+
+                # else, compute the weight of an edge (out_id, in_id)
+                else:
+                    dist = self.distance(out_id, in_id)
+                    adjacency_matrix[out_id][in_id] = dist
+
+        return adjacency_matrix
 
 
 def read_csv(path):

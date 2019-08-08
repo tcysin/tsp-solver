@@ -1,6 +1,5 @@
 """
-Each branch in a tree represents a sub-tour. Each node represents 
-addition of new vertex to parent's sub-tour. An addition decreases 
+An addition decreases 
 the number of available vertices. The leaves are last available 
 vertices to add to the sub-tour. When leaves are appended, sub-tour 
 becomes a tour.
@@ -18,10 +17,17 @@ from copy import deepcopy
 
 import numpy as np
 
+# TODO: delete next line
+from . import graph
 from .greedy import greedy
 
 
-class SearchTree:
+class SearchSpace:
+    """Represents the search space of TSP optimization algorithm.
+
+    Each branch in a tree acts as a sub-tour. 
+    Each node means addition of new vertex to parent's sub-tour.
+    """
 
     class _Node:
         __slots__ = ['path', 'M', 'bound']
@@ -58,8 +64,7 @@ class SearchTree:
         # data needed to assemble the root node
         start_node = next(self._graph.nodes())
         path = [start_node]
-        # TODO: get graph's adjacency matrix
-        M = 1
+        M = self._graph.adjacency_matrix()
         M = np.array(M)
 
         # compute the bound of starting node
@@ -208,13 +213,19 @@ class SearchTree:
 
         return self._tour_best
 
+# TODO: refactor into branch_and_bound()
+if __name__ == '__main__':
 
-def branch_and_bound(graph):
+    d = {
+        'A': graph._Point2D(0, 0),
+        'B': graph._Point2D(0, 3),
+        'C': graph._Point2D(4, 3),
+        'D': graph._Point2D(4, 0)
+    }
+    g = graph.Graph(d)
 
-    st = SearchTree(graph)
+    st = SearchSpace(g)
     st.initialize()
     st.explore()
 
     tour = st.best_tour()
-
-    return tour
