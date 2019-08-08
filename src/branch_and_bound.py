@@ -156,14 +156,14 @@ class SearchTree:
         modifies a node.
         """
 
-        out_vertex, in_vertex = node.path[-2], node.path[-1]
+        begin_vertex, end_vertex = node.path[-2], node.path[-1]
         start = node.path[0]
 
         # remember the weight of an edge we are about to include
-        weight = node.M[out_vertex][in_vertex]
+        weight = node.M[begin_vertex][end_vertex]
 
         # include an edge by modifying node's matrix
-        self._include_edge(out_vertex, in_vertex, start, node.M)
+        self._include_edge(begin_vertex, end_vertex, start, node.M)
 
         # reduce the matrix, get the cost of the reductions
         cost = self._reduce_and_get_cost(node.M)
@@ -172,8 +172,8 @@ class SearchTree:
         node.bound += weight + cost
 
     def _include_edge(self,
-                      out_vertex,
-                      in_vertex,
+                      begin_vertex,
+                      end_vertex,
                       start,
                       M):
         """Modifies a matrix to include an edge.
@@ -181,17 +181,17 @@ class SearchTree:
         Sets a row, a column and a particular cell to infinity.
         This way, it abstracts edge inclusion from BnB algorithm."""
 
-        # restrict all available edges incident to out_vertex
-        M[out_vertex, :] = float('Inf')
+        # restrict all available edges incident to begin_vertex
+        M[begin_vertex, :] = float('Inf')
 
-        # restrict all the edges leading to in_vertex
-        M[:, in_vertex] = float('Inf')
+        # restrict all the edges leading to end_vertex
+        M[:, end_vertex] = float('Inf')
 
-        # restrict the edge from in_vertex back to out_vertex
-        M[out_vertex, in_vertex] = float('Inf')
+        # restrict the edge from end_vertex back to begin_vertex
+        M[end_vertex, begin_vertex] = float('Inf')
 
-        # restrict edge from out_vertex back to beginning of a tour
-        M[in_vertex, start] = float('Inf')
+        # restrict edge from begin_vertex back to beginning of a tour
+        M[end_vertex, start] = float('Inf')
 
 
 def branch_and_bound(graph):
