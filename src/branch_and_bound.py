@@ -18,8 +18,8 @@ from copy import deepcopy
 import numpy as np
 
 # TODO: delete next line
-from . import graph
-from .greedy import greedy
+import graph
+from greedy import greedy
 
 
 class SearchSpace:
@@ -217,10 +217,10 @@ class SearchSpace:
 if __name__ == '__main__':
 
     d = {
-        'A': graph._Point2D(0, 0),
-        'B': graph._Point2D(0, 3),
-        'C': graph._Point2D(4, 3),
-        'D': graph._Point2D(4, 0)
+        0: graph._Point2D(0, 0),
+        1: graph._Point2D(0, 3),
+        2: graph._Point2D(4, 3),
+        3: graph._Point2D(4, 0)
     }
     g = graph.Graph(d)
 

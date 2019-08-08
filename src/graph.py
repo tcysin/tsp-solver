@@ -169,7 +169,7 @@ class Graph:
         """Returns adjacency matrix for this graph."""
 
         if not self._adjacency_matrix:
-            self._compute_adjacency_matrix()
+            self._adjacency_matrix = self._compute_adjacency_matrix()
 
         return self._adjacency_matrix
 
@@ -223,9 +223,9 @@ def read_csv(path):
         # next n_nodes lines are nodes: first digit is id, next two are coords
         node_dict = {}
 
-        for _ in range(n_nodes):
+        for node_id in range(n_nodes):
             row = next(reader)[0]
-            node_id, *coordinates = row.split()
+            _, *coordinates = row.split()
             node_dict[node_id] = _Point2D(*coordinates)
 
         # postcondition

@@ -88,19 +88,19 @@ class TestGraph:
 def test_read_csv():
     gr = graph.read_csv('tests/resources/a4_diamond.tsp')
 
-    assert set(gr.nodes()) == set(['1', '2', '3', '4'])
+    assert set(gr.nodes()) == set([0, 1, 2, 3])
 
     assert (
-        gr.distance('1', '3')
-        == gr.distance('3', '4')
-        == gr.distance('4', '2')
-        == gr.distance('2', '1')
+        gr.distance(0, 2)
+        == gr.distance(2, 3)
+        == gr.distance(3, 1)
+        == gr.distance(1, 0)
         == math.sqrt(8)
     )
 
     assert (
-        gr.distance('1', '4')
-        == gr.distance('3', '2')
+        gr.distance(0, 3)
+        == gr.distance(2, 1)
         == 4
     )
 
