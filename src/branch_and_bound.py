@@ -24,13 +24,11 @@ from .greedy import greedy
 class SearchTree:
 
     class _Node:
-        __slots__ = ['current', 'M', 'path', 'explored', 'bound']
+        __slots__ = ['path', 'M', 'bound']
 
-        def __init__(self, current, M, path, explored, bound):
-            self.current = current
-            self.M = M
+        def __init__(self, path, M, bound):
             self.path = path
-            self.explored = explored
+            self.M = M
             self.bound = bound
 
     # class methods
@@ -47,7 +45,6 @@ class SearchTree:
         # data needed to assemble the root node
         start_node = next(self._graph.nodes())
         path = [start_node]
-        explored_nodes = {start_node}
         # TODO: get graph's adjacency matrix
         M = 1
         M = np.array(M)
@@ -59,10 +56,12 @@ class SearchTree:
         bound = 0 + reduction_cost + 0
 
         # assemble the root
-        self._root = self._Node(start_node, M, path, explored_nodes, bound)
+        self._root = self._Node(path, M, bound)
 
     def _reduce_and_get_cost(self, M):
-        """Reduces M in-place and returns cost of reduction."""
+        """Reduces matrix M in-place and returns cost of reduction."""
+
+        cost = 0
 
         # extract a vector of minimum values across the rows
         min_rows = M.min(axis=1)
@@ -100,33 +99,23 @@ class SearchTree:
 
         # get all the possible destination vertices
         all_vertices = set(self._graph.nodes())
-        unexplored = all_vertices - node.explored
+        explored = set(node.path)  # O(k), with k being number of vertices
+        unexplored = all_vertices - explored
 
         for vertex in unexplored:
 
             # --- assemble an instance of kid node ---
-            # vertex id under exploration
-            vertex_kid = vertex
+            path_kid = deepcopy(node.path)
+            # update the path with fresh vertex
+            path_kid.append(vertex)
 
             # get local copies of parent's (node) data
             M_kid = deepcopy(node.M)
-
-            path_kid = deepcopy(node.path)
-            # update the path with fresh vertex
-            path_kid.append(vertex_kid)
-
-            explored_kid = deepcopy(node.explored)
-            # add fresh vertex to explored set
-            explored_kid.add(vertex_kid)
-
+          
             bound_kid = node.bound
 
             # assemble an instance of a Node class
-            node_kid = self._Node(vertex_kid,
-                                  M_kid,
-                                  path_kid,
-                                  explored_kid,
-                                  bound_kid)
+            node_kid = self._Node(path_kid, M_kid, bound_kid)
 
             yield node_kid
 
@@ -140,10 +129,9 @@ class SearchTree:
         # reduce the node, update its bound
         self._reduce(node)
 
-        # stopping condition 2: bound violated
+        # stopping condition 2: bound worse than already discovered solution
         if node.bound >= self._length_best:
             return
-
         else:
             # recursively explore the children of a node
             for kid in self._children(node):
@@ -204,8 +192,6 @@ class SearchTree:
 
         # restrict edge from out_vertex back to beginning of a tour
         M[in_vertex, start] = float('Inf')
-
-        return
 
 
 def branch_and_bound(graph):
