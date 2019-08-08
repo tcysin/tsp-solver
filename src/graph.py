@@ -109,6 +109,11 @@ class Graph:
             if not isinstance(val, _Node):
                 raise TypeError('Provided values are not nodes.')
 
+    def size(self):
+        """Returns the number of nodes in this graph."""
+
+        return len(self._node_dict)
+
     def nodes(self):
         """Returns an iterator over the nodes of this graph."""
 

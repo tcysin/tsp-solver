@@ -59,6 +59,9 @@ class TestGraph:
     def test_nodes(self, g):
         assert set(g.nodes()) == set(['A', 'B', 'C'])
 
+    def test_size(self, g):
+        assert g.size() == 3
+
     def test_distance(self, g):
         assert g.distance('A', 'B') == 5
         assert g.distance('A', 'C') == 3
