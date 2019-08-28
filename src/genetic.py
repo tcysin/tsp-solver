@@ -131,7 +131,7 @@ class Population:
 
     def best_tour(self):
         """Returns best-fitted solution tour from population.
-        
+
         Returns:
             tour: list of nodes constituting best tour.
         """
@@ -170,13 +170,13 @@ class Population:
 def genetic(graph, population_size=200,
             max_iterations=50000, mutation_proba=0.1):
     """Estimates shortest tour in a graph using genetic algorithm.
-    
+
     Args:
         graph: initialized instance of Graph.
         population_size: int, controls how many solutions population contains.
         max_iterations: int.
         mutation_proba: float in [0, 1], controls mutation probability.
-    
+
     Returns:
         tour: list of nodes constituting shortest estimated tour.
     """
@@ -203,8 +203,13 @@ def genetic(graph, population_size=200,
         population.update(child2)
 
         # stopping condition - oversaturated
-        if (iteration % 1000 == 0) and population.is_saturated():
-            break
+        if (iteration % 1000 == 0):
+            print('Current best tour length: ',
+                  graph.tour_length(population.best_tour())
+                  )
+
+            if population.is_saturated():
+                break
 
     best_tour = population.best_tour()
 
