@@ -2,6 +2,7 @@ import abc
 import csv
 import math
 
+# TODO: re-think read_csv and  node_dict validation procedure
 
 class _Node(abc.ABC):
     """ADT to represent abstract concept of a node.

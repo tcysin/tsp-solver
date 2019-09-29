@@ -1,5 +1,5 @@
 """
-Crossover and mutation operators are taken from the following study:
+Crossover and mutation operators are taken from following study:
 
     Larranaga, P., Kuijpers, C. M. H., Murga, R. H., Inza, I., 
     & Dizdarevic, S. (1999). Genetic algorithms for the travelling 
@@ -22,7 +22,7 @@ class Population:
         """Lightweight ADT to represent a solution in our population.
 
         We use it to package information about fitness and tour together 
-        to simplify management of the heap. 
+        to simplify management of heap. 
         Comparison is based on _fitness_val values."""
 
         __slots__ = '_fitness_val', '_tour'
@@ -43,13 +43,13 @@ class Population:
         self._item_heap = []  # min-oriented heap
 
     def initialize(self, size):
-        """Randomly initializes the population to specified size."""
+        """Randomly initializes population to specified size."""
 
         self._item_heap = []
 
         for _ in range(size):
 
-            # construct possible tour, randomize the order of nodes
+            # construct possible tour, randomize order of nodes
             candidate_tour = list(self._graph.nodes())
             shuffle(candidate_tour)
 
@@ -57,7 +57,7 @@ class Population:
             fitness = self._fitness(candidate_tour)
             item = self._Item(fitness, candidate_tour)
 
-            # append to the container
+            # append to container
             self._item_heap.append(item)
 
         # transform container into min-oriented heap
@@ -70,7 +70,7 @@ class Population:
     def _fitness(self, tour):
         """Returns fitness of a tour.
 
-        The smaller the tour, the larger is its fitness.
+        smaller tour, larger is its fitness.
         """
 
         # make tour length an argument
@@ -103,14 +103,14 @@ class Population:
         return best_item._tour
 
     def update(self, tour):
-        """Updates population with a tour.
+        """Updates population with a tour (if possible).
 
         If fitness of provided tour is higher than that of lowest-scoring 
-        solution in the population:
-            1. Deletes the lowest-scoring solution.
+        solution in population:
+            1. Deletes lowest-scoring solution.
             2. Adds provided tour.
-
-        Otherwise, nothing happens.
+        Otherwise, nothing happens. Works in O(log n), where n is population 
+        size.
 
         Args:
             tour: list of nodes constituting a tour.
@@ -139,6 +139,7 @@ class Population:
         if not self._item_heap:
             raise Exception('Heap has not been initalized.')
 
+        # unpack an item from result list
         item, = heapq.nlargest(1, self._item_heap)
 
         return item._tour
@@ -146,17 +147,17 @@ class Population:
     def is_saturated(self):
         """Returns True if all members have same fitness, False otherwise.
 
-        Works in O(n).
+        Works in O(n), where n is population size.
         """
 
         if not self._item_heap:
             raise Exception('Heap has not been initalized.')
 
-        # if all leaves have the same fitness as min item, then
+        # if all leaves of heap have same fitness as min item, then
         # all internal nodes have same fitness
         min_item = self._item_heap[0]
 
-        # leaves of the tree in heap array start at [n // 2]
+        # leaves of tree in heap array start at [n // 2]
         leaf_start = len(self._item_heap) // 2
 
         # check whether leaves have same values as minimum item
@@ -188,7 +189,7 @@ def genetic(graph, population_size=200,
     # stopping condition - MAX_ITERATIONS limit reached
     for iteration in range(max_iterations):
 
-        # select parents from the population
+        # select parents from population
         parent1 = population.select_tour()
         parent2 = population.select_tour()
 
@@ -221,7 +222,7 @@ def ox1(main_seq, secondary_seq):
     """Returns a list - result of OX1 order crossover between sequences.
 
     See Larranaga et al. (1999) for detailed explanation. 
-    Works in O(len), where len is the length of main_seq.
+    Works in O(len), where len is length of main_seq.
 
     Args:
         main_seq, secondary_seq: python sequences.
@@ -263,7 +264,7 @@ def _fill_missing_genes(prefilled_slice, source, target):
     # keep target's offset to support simulatneous updates
     target_offset = 0
 
-    # traverse the source using offsetting, wrap around if needed
+    # traverse source using offsetting, wrap around if needed
     for source_offset in range(source_length):
         idx_source = (source_offset + start_point) % source_length
         next_val = source[idx_source]

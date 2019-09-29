@@ -17,9 +17,7 @@ from copy import deepcopy
 
 import numpy as np
 
-# TODO: delete next line
-import graph
-from greedy import greedy
+from src.greedy import greedy
 
 
 class SearchSpace:
@@ -59,7 +57,7 @@ class SearchSpace:
         self._root = self._construct_root()
 
     def _construct_root(self):
-        """Manually constructs root node in space search tree."""
+        """Manually constructs and returns root node in space search tree."""
 
         # data needed to assemble the root node
         start_node = next(self._graph.nodes())
@@ -99,6 +97,8 @@ class SearchSpace:
         return cost
 
     def explore(self):
+        """Perform branch-and-bound assisted search of an optimal tour."""
+
         # recursively traverse the children of the root
         for kid in self._children(self._root):
             self._DFS(kid)
@@ -193,10 +193,9 @@ class SearchSpace:
     def _include_edge(self, begin_vertex, end_vertex, start, M):
         """Modifies a matrix to include an edge.
 
-        Sets a row, a column and a particular cell to infinity.
-        This way, it abstracts edge inclusion from BnB algorithm."""
+        Sets a row, a column and a particular cell to infinity."""
 
-        # restrict all available edges incident to begin_vertex
+        # restrict all available destination edges from begin_vertex
         M[begin_vertex, :] = float('Inf')
 
         # restrict all the edges leading to end_vertex
@@ -205,7 +204,7 @@ class SearchSpace:
         # restrict the edge from end_vertex back to begin_vertex
         M[end_vertex, begin_vertex] = float('Inf')
 
-        # restrict edge from begin_vertex back to beginning of a tour
+        # restrict edge from end_vertex back to beginning of a tour
         M[end_vertex, start] = float('Inf')
 
     def best_tour(self):
@@ -213,7 +212,9 @@ class SearchSpace:
 
         return self._tour_best
 
+
 # TODO: refactor into branch_and_bound()
+"""
 if __name__ == '__main__':
 
     d = {
@@ -229,3 +230,4 @@ if __name__ == '__main__':
     st.explore()
 
     tour = st.best_tour()
+"""

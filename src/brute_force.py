@@ -26,6 +26,7 @@ def brute_force(graph):
     for tour in all_tours:
         # smartly check tour length
         length = 0
+
         for src, dest in graph._edges_from_tour(tour):
             length += graph.distance(src, dest)
 
