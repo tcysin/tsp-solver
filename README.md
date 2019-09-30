@@ -15,7 +15,7 @@ Comes in two flavours:
 >>> from src import Solver
 >>> s = Solver(algorithm='greedy')
 >>> path = 'a4_.tsp'
->>> shortest_tour = s.solve(graph=path)
+>>> shortest_tour = s.solve(path)
 >>> shortest_tour
 ['1', '3', '4', '2']
 ```

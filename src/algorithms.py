@@ -10,6 +10,7 @@ DESCRIPTION
 from .branch_and_bound import branch_and_bound
 from .brute_force import brute_force
 from .genetic import genetic
+from .graph import read_csv
 from .greedy import greedy
 # from .dynamic import dynamic
 
@@ -37,5 +38,7 @@ class Solver:
         self.func = table[algorithm]
         self.kwargs = kwargs
 
-    def solve(self, graph):
+    def solve(self, path):
+        graph = read_csv(path)
+        
         return self.func(graph, **self.kwargs)
