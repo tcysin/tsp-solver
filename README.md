@@ -6,7 +6,7 @@ Simple library to solve instances of Symmetric [Travelling Salesman Problem](htt
 
 Comes in two flavours:
 
-- **src** python module can be used to solve actual problems
+- **src** python module
 - **walkthrough** is simple demo-GUI that walks you through solving the problem
 
 

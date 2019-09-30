@@ -17,11 +17,11 @@ from copy import deepcopy
 
 import numpy as np
 
-from src.greedy import greedy
+from .greedy import greedy
 
 
-class SearchSpace:
-    """Represents the search space of TSP optimization algorithm.
+class SearchTree:
+    """Represents the search tree of TSP optimization algorithm.
 
     Each branch in a tree acts as a sub-tour. 
     Each node means addition of new vertex to parent's sub-tour.
@@ -214,20 +214,10 @@ class SearchSpace:
 
 
 # TODO: refactor into branch_and_bound()
-"""
-if __name__ == '__main__':
+def bnb(graph):
 
-    d = {
-        0: graph._Point2D(0, 0),
-        1: graph._Point2D(0, 3),
-        2: graph._Point2D(4, 3),
-        3: graph._Point2D(4, 0)
-    }
-    g = graph.Graph(d)
-
-    st = SearchSpace(g)
+    st = SearchTree(graph)
     st.initialize()
     st.explore()
 
-    tour = st.best_tour()
-"""
+    return st.best_tour()

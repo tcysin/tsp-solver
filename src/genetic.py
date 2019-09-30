@@ -81,6 +81,8 @@ class Population:
     def select_tour(self):
         """Selects a solution tour using 2-way Tournament Selection.
 
+        Works in O(1).
+
         Taken from:
             Blickle, T., & Thiele, L. (1996). A comparison of selection 
             schemes used in evolutionary algorithms. Evolutionary 
@@ -103,7 +105,7 @@ class Population:
         return best_item._tour
 
     def update(self, tour):
-        """Updates population with a tour (if possible).
+        """Updates population with a tour if possible.
 
         If fitness of provided tour is higher than that of lowest-scoring 
         solution in population:
@@ -195,19 +197,19 @@ def genetic(graph, population_size=200,
 
         child1 = ox1(parent1, parent2)  # crossover
         sim(child1) if random() <= mutation_proba else None  # mutation
+        population.update(child1)  # replacing ancestors
 
         # same for second child, but flip order of parents
         child2 = ox1(parent2, parent1)
         sim(child2) if random() <= mutation_proba else None
-
-        population.update(child1)  # replacing ancestors
         population.update(child2)
 
         # stopping condition - oversaturated
         if (iteration % 1000 == 0):
-            print('Current best tour length: ',
-                  graph.tour_length(population.best_tour())
-                  )
+            print(
+                'Current best tour length: ',
+                graph.tour_length(population.best_tour())
+            )
 
             if population.is_saturated():
                 break
@@ -221,8 +223,8 @@ def genetic(graph, population_size=200,
 def ox1(main_seq, secondary_seq):
     """Returns a list - result of OX1 order crossover between sequences.
 
-    See Larranaga et al. (1999) for detailed explanation. 
-    Works in O(len), where len is length of main_seq.
+    Works in O(len), where len is length of main_seq. 
+    See Larranaga et al. (1999) for detailed explanation.
 
     Args:
         main_seq, secondary_seq: python sequences.

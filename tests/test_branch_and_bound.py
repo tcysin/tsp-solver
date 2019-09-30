@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from src.branch_and_bound import SearchSpace
+from src.branch_and_bound import SearchTree
 from src.graph import Graph
 
 
@@ -21,7 +21,7 @@ def graph(scope='module'):
 class TestSearchSpace:
     def test_reduce_and_get_cost(self):
         dummy = object()
-        st = SearchSpace(dummy)
+        st = SearchTree(dummy)
         M = np.array([
             [1, 2],
             [19, 23]

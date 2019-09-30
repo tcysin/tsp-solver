@@ -1,0 +1,19 @@
+NAME : g12 cross
+COMMENT : None
+TYPE : TSP
+DIMENSION: 12
+EDGE_WEIGHT_TYPE : EUC_2D
+NODE_COORD_SECTION
+  1 4 0
+  2 6 0
+  3 8 0
+  4 0 3
+  5 0 5
+  6 0 7
+  7 3 11
+  8 5 11
+  9 7 11
+  10 11 8
+  11 11 6
+  12 11 4
+EOF
