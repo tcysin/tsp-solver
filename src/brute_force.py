@@ -7,7 +7,7 @@ Checks all possible tours and selects the shortest one.
 from itertools import permutations
 
 
-def brute_force(graph):
+def brute_force(graph, **kwargs):
     """Calculates and returns shortest tour using brute force approach.
 
     Runs in O(n!). Provides exact solution.

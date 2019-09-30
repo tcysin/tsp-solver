@@ -6,3 +6,36 @@ DESCRIPTION
         - greedy
         - genetic algorithm
 """
+
+from .branch_and_bound import branch_and_bound
+from .brute_force import brute_force
+from .genetic import genetic
+from .greedy import greedy
+# from .dynamic import dynamic
+
+table = {
+    'branch_and_bound': branch_and_bound,
+    'brute_force': brute_force,
+    #'dynamic': None,
+    'genetic': genetic,
+    'greedy': greedy
+}
+
+# TODO: re-design algo funcs to be classes accepting params
+class Solver:
+    """Solves instances of TSP problem.
+
+    Available algorithms:
+        'branch_and_bound'
+        'brute_force'
+        'dynamic'
+        'genetic'
+        'greedy'
+    """
+
+    def __init__(self, algorithm='dynamic', **kwargs):
+        self.func = table[algorithm]
+        self.kwargs = kwargs
+
+    def solve(self, graph):
+        return self.func(graph, **self.kwargs)
