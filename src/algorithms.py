@@ -1,10 +1,6 @@
 """
 DESCRIPTION
     This module provides graph algorithms.
-    
-    Algorithms available:
-        - greedy
-        - genetic algorithm
 """
 
 from .graph import read_csv
@@ -28,11 +24,11 @@ class Solver:
     """Solves instances of TSP problem.
 
     Available algorithms:
-        'branch_and_bound'
-        'brute_force'
-        'dynamic'
-        'genetic'
-        'greedy'
+        branch_and_bound
+        brute_force
+        dynamic
+        genetic
+        greedy
     """
 
     def __init__(self, algorithm='dynamic'):
