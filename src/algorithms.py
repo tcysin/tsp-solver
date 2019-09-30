@@ -7,12 +7,13 @@ DESCRIPTION
         - genetic algorithm
 """
 
+from .graph import read_csv
+# algorithms
 from .branch_and_bound import branch_and_bound
 from .brute_force import brute_force
-from .genetic import genetic
-from .graph import read_csv
-from .greedy import greedy
 # from .dynamic import dynamic
+from .genetic import genetic
+from .greedy import greedy
 
 table = {
     'branch_and_bound': branch_and_bound,
@@ -34,11 +35,10 @@ class Solver:
         'greedy'
     """
 
-    def __init__(self, algorithm='dynamic', **kwargs):
+    def __init__(self, algorithm='dynamic'):
         self.func = table[algorithm]
-        self.kwargs = kwargs
 
     def solve(self, path):
         graph = read_csv(path)
-        
-        return self.func(graph, **self.kwargs)
+
+        return self.func(graph)

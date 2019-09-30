@@ -6,8 +6,8 @@ Simple library to solve instances of Symmetric [Travelling Salesman Problem](htt
 
 Comes in two flavours:
 
-- **src** python module
-- **walkthrough** is simple demo-GUI that walks you through solving the problem
+- **src** is a python module
+- **walkthrough** is a simple demo-GUI that walks you through solving the problem
 
 
 ## Usage
@@ -25,8 +25,7 @@ To run **walkthorugh**, download the repository and double-click
 
 
 ## About
-The description of *supported file format* can be found [here](https://wwwproxy.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp95.pdf).
-
+The description of *supported file format* can be found [here](https://wwwproxy.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp95.pdf). 
 Implemented approaches are listed below.
 
 **Exact algorithms**
@@ -42,6 +41,7 @@ Implemented approaches are listed below.
 
 
 ## Dependencies
+- [Python](https://www.python.org/downloads/): 3.5.1 or higher
 - [pytest](https://docs.pytest.org/en/latest/): 4.5.0 or higher for tests
 
 

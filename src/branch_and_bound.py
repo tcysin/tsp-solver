@@ -214,7 +214,7 @@ class SearchTree:
 
 
 # TODO: refactor into branch_and_bound()
-def branch_and_bound(graph, **kwargs):
+def branch_and_bound(graph):
 
     st = SearchTree(graph)
     st.initialize()

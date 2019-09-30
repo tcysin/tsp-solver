@@ -6,7 +6,7 @@ visited.
 """
 
 
-def greedy(graph, **kwargs):
+def greedy(graph):
     """Calculates and returns shortest tour using greedy approach.
 
     Runs in O(n^2). Provides approximate solution.
