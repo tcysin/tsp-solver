@@ -12,10 +12,10 @@ Comes in two flavours:
 
 ## Usage
 ```python
->>> from src.solver import Solver
+>>> from src import Solver
 >>> s = Solver(algorithm='greedy')
 >>> path = 'a4_.tsp'
->>> shortest_tour = s.shortest_tour(path)
+>>> shortest_tour = s.solve(graph=path)
 >>> shortest_tour
 ['1', '3', '4', '2']
 ```
@@ -33,6 +33,7 @@ Implemented approaches are listed below.
 
 - [Brute force search](https://en.wikipedia.org/wiki/Brute-force_search)
 - [Branch and bound algorithm](https://en.wikipedia.org/wiki/Branch_and_bound)
+- [Dynamic programming algorithm](https://en.wikipedia.org/wiki/Held%E2%80%93Karp_algorithm)
 
 **Approximation algorithms**
 
