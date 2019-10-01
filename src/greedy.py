@@ -12,7 +12,7 @@ def greedy(graph):
     Runs in O(n^2). Provides approximate solution.
 
     Args:
-        graph (Graph): instance of a Graph.
+        graph: instance of a Graph.
 
     Returns:
         list: sequence of nodes constituting shortest tour.

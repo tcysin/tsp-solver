@@ -7,14 +7,14 @@ from .graph import read_csv
 # algorithms
 from .branch_and_bound import branch_and_bound
 from .brute_force import brute_force
-# from .dynamic import dynamic
+from .dynamic import dynamic
 from .genetic import genetic
 from .greedy import greedy
 
 table = {
     'branch_and_bound': branch_and_bound,
     'brute_force': brute_force,
-    #'dynamic': None,
+    'dynamic': dynamic,
     'genetic': genetic,
     'greedy': greedy
 }
@@ -32,9 +32,9 @@ class Solver:
     """
 
     def __init__(self, algorithm='dynamic'):
-        self.func = table[algorithm]
+        self.algorithm = table[algorithm]
 
     def solve(self, path):
         graph = read_csv(path)
 
-        return self.func(graph)
+        return self.algorithm(graph)

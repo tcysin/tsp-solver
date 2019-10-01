@@ -1,13 +1,8 @@
-# TSP Solver
+# Travelling Salesman Problem Solver
 
 ![Just some random picture.](aco_tsp.png)
 
 Simple library to solve instances of Symmetric [Travelling Salesman Problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem).
-
-Comes in two flavours:
-
-- **src** is a python module
-- **walkthrough** is a simple demo-GUI that walks you through solving the problem
 
 
 ## Usage
@@ -19,8 +14,7 @@ Comes in two flavours:
 ['1', '3', '4', '2']
 ```
 
-To run **walkthorugh**, download the repository and double-click 
-*Solver GUI* icon.
+To run **walkthrough**, download the repository and run *GUI.py* file.
 
 
 ## About
@@ -46,9 +40,6 @@ Implemented approaches are listed below.
 
 ## Tests
 Tests are implemented using `pytest`. To run all tests, please refer to [this piece](https://docs.pytest.org/en/latest/getting-started.html#run-multiple-tests) of *pytest* documentation.
-
-
-## Documentation
 
 
 ## License

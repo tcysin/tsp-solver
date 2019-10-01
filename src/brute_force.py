@@ -13,7 +13,7 @@ def brute_force(graph):
     Runs in O(n!). Provides exact solution.
 
     Args:
-        graph (Graph): instance of a Graph.
+        graph: instance of a Graph.
 
     Returns:
         list: sequence of nodes constituting shortest tour.
@@ -24,7 +24,7 @@ def brute_force(graph):
     best_tour = None
 
     for tour in all_tours:
-        # smartly check tour length
+        # aggregate tour length in a smart way
         length = 0
 
         for src, dest in graph._edges_from_tour(tour):
@@ -42,4 +42,4 @@ def brute_force(graph):
         else:
             continue
 
-    return best_tour
+    return list(best_tour)
