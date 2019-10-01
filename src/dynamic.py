@@ -220,7 +220,7 @@ def find_optimal_tour(M, start_node, memo):
 
     last_index = start_node
     state = (1 << n_nodes) - 1  # we start at END_STATE
-    tour = n_nodes*[None] + 1
+    tour = [start_node]
 
     # step through all nodes in a tour, skip the start node
     for _ in range(1, n_nodes):
