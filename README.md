@@ -15,8 +15,6 @@ Copy `src` and `tests` folders to your project.
 ```
 
 ## About
-Done as part of Advanced Algorithmic course at university.
-
 The description of *supported file format* can be found [here](https://wwwproxy.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp95.pdf).
 
 **Exact algorithms**
