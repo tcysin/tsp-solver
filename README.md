@@ -2,22 +2,22 @@
 
 Simple library to solve instances of Symmetric [Travelling Salesman Problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem).
 
+## Installation
+Copy `src` and `tests` folders to your project.
 
 ## Usage
 ```python
 >>> from src import Solver
->>> s = Solver(algorithm='greedy')
+>>> s = Solver(algorithm='dynamic')
 >>> shortest_tour = s.solve(path='a4_.tsp')
 >>> shortest_tour
-['1', '3', '4', '2']
+[0, 1, 3, 2]
 ```
 
-To run **walkthrough**, download the repository and run *GUI.py* file.
-
-
 ## About
-The description of *supported file format* can be found [here](https://wwwproxy.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp95.pdf). 
-Implemented approaches are listed below.
+Done as part of Advanced Algorithmic course at university.
+
+The description of *supported file format* can be found [here](https://wwwproxy.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp95.pdf).
 
 **Exact algorithms**
 

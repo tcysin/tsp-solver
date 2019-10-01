@@ -24,17 +24,19 @@ class Solver:
     """Solves instances of TSP problem.
 
     Available algorithms:
-        branch_and_bound
-        brute_force
-        dynamic
-        genetic
-        greedy
+        'branch_and_bound', 'brute_force', 'dynamic', 'genetic', 'greedy'.
     """
 
     def __init__(self, algorithm='dynamic'):
         self.algorithm = table[algorithm]
 
     def solve(self, path):
+        """Calculates and returns shortest tour in a graph.
+        
+        Returns:
+            tour - list of nodes constituting shortest tour.
+        """
+
         graph = read_csv(path)
 
         return self.algorithm(graph)
