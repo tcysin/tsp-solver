@@ -1,7 +1,5 @@
 # Travelling Salesman Problem Solver
 
-![Just some random picture.](aco_tsp.png)
-
 Simple library to solve instances of Symmetric [Travelling Salesman Problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem).
 
 
