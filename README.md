@@ -40,3 +40,9 @@ Tests are implemented using `pytest`. To run all tests, please refer to [this pi
 
 ## License
 [MIT](LICENSE)
+
+## Authors
+- Aleksei Tcysin
+- Malshani Ranchagoda
+- Sivasundar Karthikeyan
+
